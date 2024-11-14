@@ -16,7 +16,7 @@ function Header() {
 
         {/* 검색창 영역  */}
         <SearchBar
-          placeholder="검색할 지역 이름을 입력하세요."
+          placeholder="검색할 지역 이름을 영어로 입력하세요."
           className="flex-1"
         />
       </div>

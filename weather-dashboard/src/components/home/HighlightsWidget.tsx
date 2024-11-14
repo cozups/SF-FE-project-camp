@@ -7,7 +7,32 @@ import {
   HighlightsItem,
   SunriseAndSunset,
 } from '@/components';
-function HighlightsWidget() {
+import { ForecastTideDay, Tide, Weather } from '@/types';
+
+interface Props {
+  tideData: ForecastTideDay;
+  currentData: Weather;
+}
+
+function HighlightsWidget({ tideData, currentData }: Props) {
+  if (
+    !currentData ||
+    !currentData.forecast ||
+    !currentData.forecast.forecastday[0]
+  ) {
+    return;
+  }
+  const tideTimesWithUnits = tideData.day.tides[0].tide.map((item: Tide) => {
+    const hourString = item.tide_time.split(' ')[1];
+    const hour = Number(hourString.split(':')[0]);
+    const formattedUnit = hour < 12 ? 'am' : 'pm';
+
+    return {
+      displayTime: hourString,
+      unit: formattedUnit,
+      type: item.tide_type,
+    };
+  });
   return (
     <Card className="flex-1">
       <CardHeader>
@@ -34,42 +59,22 @@ function HighlightsWidget() {
                 className="h-14"
               />
               <div className="w-fit grid grid-cols-4 gap-3">
-                <div className="flex flex-col items-center">
-                  {/* 몇회 만조/간조 표시 영역 */}
-                  <p className="text-sm text-muted-foreground">1회 - 만조</p>
-                  {/* 시간 표시 영역 */}
-                  <p className="poppins-medium scroll-m-20 text-lg font-semibold tracking-tight">
-                    05:48
-                    <span className="ml-[1px]">am</span>
-                  </p>
-                </div>
-                <div className="flex flex-col items-center">
-                  {/* 몇회 만조/간조 표시 영역 */}
-                  <p className="text-sm text-muted-foreground">1회 - 만조</p>
-                  {/* 시간 표시 영역 */}
-                  <p className="poppins-medium scroll-m-20 text-lg font-semibold tracking-tight">
-                    05:48
-                    <span className="ml-[1px]">am</span>
-                  </p>
-                </div>
-                <div className="flex flex-col items-center">
-                  {/* 몇회 만조/간조 표시 영역 */}
-                  <p className="text-sm text-muted-foreground">1회 - 만조</p>
-                  {/* 시간 표시 영역 */}
-                  <p className="poppins-medium scroll-m-20 text-lg font-semibold tracking-tight">
-                    05:48
-                    <span className="ml-[1px]">am</span>
-                  </p>
-                </div>
-                <div className="flex flex-col items-center">
-                  {/* 몇회 만조/간조 표시 영역 */}
-                  <p className="text-sm text-muted-foreground">1회 - 만조</p>
-                  {/* 시간 표시 영역 */}
-                  <p className="poppins-medium scroll-m-20 text-lg font-semibold tracking-tight">
-                    05:48
-                    <span className="ml-[1px]">am</span>
-                  </p>
-                </div>
+                {tideTimesWithUnits.map((tide, index) => (
+                  <div
+                    className="flex flex-col items-center"
+                    key={tide.displayTime}
+                  >
+                    {/* 몇회 만조/간조 표시 영역 */}
+                    <p className="text-sm text-muted-foreground">
+                      {index + 1}회 - {tide.type === 'HIGH' ? '만조' : '간조'}
+                    </p>
+                    {/* 시간 표시 영역 */}
+                    <p className="poppins-medium scroll-m-20 text-lg font-semibold tracking-tight">
+                      {tide.displayTime}
+                      <span className="ml-[1px]">{tide.unit}</span>
+                    </p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -87,14 +92,14 @@ function HighlightsWidget() {
                 data={{
                   imgUrl: 'src/assets/icons/1000d.svg',
                   label: 'Sunrise',
-                  time: '07:00 AM',
+                  time: currentData.forecast.forecastday[0].astro.sunrise,
                 }}
               />
               <SunriseAndSunset
                 data={{
                   imgUrl: 'src/assets/icons/1000n.svg',
                   label: 'Sunset',
-                  time: '05:34 PM',
+                  time: currentData.forecast.forecastday[0].astro.sunset,
                 }}
               />
             </CardContent>
@@ -106,7 +111,7 @@ function HighlightsWidget() {
               label: '습도',
               description: 'Humidity',
               imgUrl: 'src/assets/icons/Humidity.svg',
-              value: 80,
+              value: currentData.current.humidity,
               unit: '%',
             }}
           />
@@ -115,7 +120,7 @@ function HighlightsWidget() {
               label: '기압',
               description: 'Pressure',
               imgUrl: 'src/assets/icons/Wind.svg',
-              value: 1024,
+              value: currentData.current.pressure_mb,
               unit: 'hPa',
             }}
           />
@@ -124,7 +129,7 @@ function HighlightsWidget() {
               label: '가시거리',
               description: 'Visibility',
               imgUrl: 'src/assets/icons/Fog.svg',
-              value: 10,
+              value: currentData.current.vis_km,
               unit: 'km',
             }}
           />
@@ -133,7 +138,7 @@ function HighlightsWidget() {
               label: '체감온도',
               description: 'Feels Like',
               imgUrl: 'src/assets/icons/Hot.svg',
-              value: 19,
+              value: currentData.current.feelslike_c,
               unit: '\u2103', // 유니코드로 전달
             }}
           />

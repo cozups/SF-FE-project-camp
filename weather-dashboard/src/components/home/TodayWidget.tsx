@@ -1,3 +1,4 @@
+import { CalendarDays, MapPinned } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -6,9 +7,15 @@ import {
   CardTitle,
   Separator,
 } from '@/components';
-import { CalendarDays, MapPinned } from 'lucide-react';
+import { Weather } from '@/types';
 
-function TodayWidget() {
+interface Props {
+  data: Weather;
+}
+
+function TodayWidget({ data }: Props) {
+  const { current, location } = data;
+
   return (
     <Card className="w-1/4 min-w-[25%]">
       <CardHeader>
@@ -19,14 +26,24 @@ function TodayWidget() {
         <div className="w-full h-full flex flex-col">
           <div className="flex items-center gap-4">
             {/* 날씨 아이콘 */}
-            <img
-              src="src/assets/icons/1000d.svg"
-              alt="weather-icon"
-              className="w-16 h-16"
-            />
+            {/* 오리지널 아이콘 코드 */}
+            {/* "//cdn.weatherapi.com/weather/64x64/day/116.png" */}
+            {current.condition.icon.includes('day') ? (
+              <img
+                src={`src/assets/icons/${current.condition.code}d.svg`}
+                alt="weather-icon"
+                className="w-16 h-16"
+              />
+            ) : (
+              <img
+                src={`src/assets/icons/${current.condition.code}n.svg`}
+                alt="weather-icon"
+                className="w-16 h-16"
+              />
+            )}
             <div className="w-full flex items-start gap-1">
               <span className="poppins-bold scroll-m-20 text-6xl font-extrabold tracking-tight">
-                20
+                {Math.round(current.temp_c)}
               </span>
               <span className="text-4xl font-extrabold">&#8451;</span>
             </div>
@@ -36,12 +53,14 @@ function TodayWidget() {
             {/* 캘린더 날짜 표시 영역 */}
             <div className="flex items-center justify-start gap-2">
               <CalendarDays className="w-4 h-4" />
-              <p className="leading-6">2024-11-13</p>
+              <p className="leading-6">{location.localtime.split(' ')[0]}</p>
             </div>
             {/* 위치 표시 영역 */}
             <div className="flex items-center justify-start gap-2">
               <MapPinned className="w-4 h-4" />
-              <p className="leading-6">Seoul South Korea</p>
+              <p className="leading-6">
+                {location.name} &middot; {location.country}
+              </p>
             </div>
           </div>
         </div>

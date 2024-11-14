@@ -27,3 +27,4 @@ export { SearchBar } from './ui/search-bar';
 export { SunriseAndSunset } from './home/SunriseAndSunset';
 export { HighlightsItem } from './home/HighlightsItem';
 export { WeeklyWeatherItem } from './home/WeeklyWeatherItem';
+export { HourlyItem } from './home/HourlyItem';
