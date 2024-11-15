@@ -1,7 +1,8 @@
-import { ForecastDay, ForecastTideDay, Weather } from '@/types';
 import axios from 'axios';
+import { ForecastDay, ForecastTideDay, Weather } from '@/types';
 
 export const fetchApi = async (
+  cityName: string,
   setState: React.Dispatch<React.SetStateAction<Weather>>
 ) => {
   const API_KEY = '963c5be9ec9e453e86004727241411';
@@ -10,7 +11,7 @@ export const fetchApi = async (
   try {
     /**  Promise 인스턴스 방법을 사용했을 땐 resolve에 해당 */
     const res = await axios.get(
-      `${BASE_URL}/forecast.json?q=seoul&days=7&key=${API_KEY}`
+      `${BASE_URL}/forecast.json?q=${cityName}&days=7&key=${API_KEY}`
     );
 
     if (res.status === 200) {
@@ -26,6 +27,7 @@ export const fetchApi = async (
 };
 
 export const fetchTideApi = async (
+  cityName: string,
   setState: React.Dispatch<React.SetStateAction<ForecastTideDay>>
 ) => {
   const API_KEY = '963c5be9ec9e453e86004727241411';
@@ -34,11 +36,10 @@ export const fetchTideApi = async (
   try {
     /**  Promise 인스턴스 방법을 사용했을 땐 resolve에 해당 */
     const res = await axios.get(
-      `${BASE_URL}/marine.json?q=seoul&days=1&key=${API_KEY}`
+      `${BASE_URL}/marine.json?q=${cityName}&days=1&key=${API_KEY}`
     );
 
     if (res.status === 200) {
-      console.log(res.data);
       setState(res.data.forecast.forecastday[0]);
     }
   } catch (error) {
@@ -51,6 +52,7 @@ export const fetchTideApi = async (
 };
 
 export const getOneWeekWeather = async (
+  cityName: string,
   setState: React.Dispatch<React.SetStateAction<never[]>>
 ) => {
   const API_KEY = '963c5be9ec9e453e86004727241411';
@@ -59,7 +61,7 @@ export const getOneWeekWeather = async (
   try {
     /**  Promise 인스턴스 방법을 사용했을 땐 resolve에 해당 */
     const res = await axios.get(
-      `${BASE_URL}/forecast.json?q=seoul&days=7&key=${API_KEY}`
+      `${BASE_URL}/forecast.json?q=${cityName}&days=7&key=${API_KEY}`
     );
 
     if (res.status === 200) {

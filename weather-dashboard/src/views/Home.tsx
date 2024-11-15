@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
 import {
   Header,
   HighlightsWidget,
@@ -9,17 +10,19 @@ import {
 } from '@/components';
 import { fetchApi, fetchTideApi, getOneWeekWeather } from '@/api';
 import { defaultTideData, defaultWeatherData } from '@/state';
+import { cityNameAtom } from '@/store';
 
 function HomePage() {
   const [weatherData, setWeatherData] = useState(defaultWeatherData);
   const [tideData, setTideData] = useState(defaultTideData);
   const [oneWeekWeatherSummary, setOneWeekWeatherSummary] = useState([]);
+  const [cityName] = useAtom(cityNameAtom);
 
   useEffect(() => {
-    fetchApi(setWeatherData);
-    fetchTideApi(setTideData);
-    getOneWeekWeather(setOneWeekWeatherSummary);
-  }, []);
+    fetchApi(cityName, setWeatherData);
+    fetchTideApi(cityName, setTideData);
+    getOneWeekWeather(cityName, setOneWeekWeatherSummary);
+  }, [cityName]);
 
   return (
     <div className="page bg-gray-200">

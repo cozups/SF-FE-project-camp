@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useAtom } from 'jotai';
 import { Card } from '@/components';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import useKakaoLoader from '@/hooks/useKakaoLoader';
+import { cityNameAtom } from '@/store';
 
 const positions = [
   {
@@ -41,7 +42,7 @@ const positions = [
 function MapWidget() {
   useKakaoLoader();
 
-  const [cityName, setCityName] = useState('seoul');
+  const [, setCityName] = useAtom(cityNameAtom);
 
   return (
     <Card className="w-1/4 min-w-[25%] h-full">

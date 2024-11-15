@@ -1,6 +1,22 @@
+import React, { useState } from 'react';
+import { useAtom } from 'jotai';
 import { SearchBar } from '@/components';
+import { cityNameAtom } from '@/store';
 
 function Header() {
+  const [, setCityName] = useAtom(cityNameAtom);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setCityName(inputValue);
+      setInputValue('');
+    }
+  };
+
   return (
     <header className="w-full h-20 flex items-center p-6 gap-6">
       <div className="w-1/2 flex items-center justify-start gap-6">
@@ -18,6 +34,9 @@ function Header() {
         <SearchBar
           placeholder="검색할 지역 이름을 영어로 입력하세요."
           className="flex-1"
+          value={inputValue}
+          onInput={handleChange}
+          onKeyDown={handleKeyDown}
         />
       </div>
     </header>
