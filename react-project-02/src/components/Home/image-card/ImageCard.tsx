@@ -11,7 +11,9 @@ import {
   DialogTrigger,
 } from '@/components/ui';
 import { useToast } from '@/hooks/use-toast';
+import { bookmarkAtom } from '@/store';
 import { ImageCardType } from '@/types';
+import { useAtom } from 'jotai';
 import {
   AlignLeft,
   Bookmark,
@@ -21,6 +23,7 @@ import {
   Pin,
   Trash,
 } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface Props {
   data: ImageCardType;
@@ -28,15 +31,19 @@ interface Props {
 
 function ImageCard({ data }: Props) {
   const { toast } = useToast();
-  const bookmark: ImageCardType[] = JSON.parse(
-    localStorage.getItem('bookmark') || '[]'
-  );
+  const [bookmark, setBookmark] = useAtom(bookmarkAtom);
+
+  useEffect(() => {
+    setBookmark(JSON.parse(localStorage.getItem('bookmark') || '[]'));
+  }, [setBookmark]);
+
   const isIncluded =
     bookmark.findIndex((item: ImageCardType) => item.id === data.id) > -1;
 
   const onAddBookmark = () => {
     if (!bookmark.length) {
       localStorage.setItem('bookmark', JSON.stringify([data]));
+      setBookmark([data]);
       toast({
         title: '북마크 추가 성공하였습니다.',
       });
@@ -48,6 +55,7 @@ function ImageCard({ data }: Props) {
         });
       } else {
         localStorage.setItem('bookmark', JSON.stringify([...bookmark, data]));
+        setBookmark([...bookmark, data]);
         toast({
           title: '북마크 추가 성공하였습니다.',
         });
@@ -57,7 +65,9 @@ function ImageCard({ data }: Props) {
 
   const onClickDeleteBookmark = () => {
     const deletedBookmark = bookmark.filter((item) => item.id !== data.id);
+
     localStorage.setItem('bookmark', JSON.stringify(deletedBookmark));
+    setBookmark(deletedBookmark);
     toast({
       title: '북마크가 삭제되었습니다.',
     });

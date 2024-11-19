@@ -1,9 +1,11 @@
+import { ImageCardType } from '@/types';
 import axios from 'axios';
 import { atom } from 'jotai';
 
 export const pageAtom = atom<number>(1);
 export const searchValueAtom = atom<string>('korea');
 export const totalImageNumAtom = atom<number>(10000);
+export const bookmarkAtom = atom<ImageCardType[]>([]);
 
 export const fetchApi = async (
   searchValue: string,

@@ -1,15 +1,11 @@
 import { Header, Nav } from '@/components/common';
 import { ImageCard } from '@/components/Home';
-import { ImageCardType } from '@/types';
-import { useEffect, useState } from 'react';
+import { bookmarkAtom } from '@/store';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 
 function BookmarkPage() {
-  const [bookmark, setBookmark] = useState<ImageCardType[]>([]);
-
-  useEffect(() => {
-    const storedBookmark = JSON.parse(localStorage.getItem('bookmark') || '[]');
-    setBookmark(storedBookmark);
-  }, [bookmark]);
+  const [bookmark, setBookmark] = useAtom(bookmarkAtom);
 
   return (
     <div className="page">
