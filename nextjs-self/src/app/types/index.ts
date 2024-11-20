@@ -1,16 +1,16 @@
 export interface Page {
-  id: string;
+  id: number;
   title: string;
   boards: BoardData[];
-  from: string;
-  to: string;
+  from: Date | null;
+  to: Date | null;
 }
 
 export interface BoardData {
   id: string;
   title: string;
-  from: string;
-  to: string;
+  from: Date | null;
+  to: Date | null;
   isCompleted: boolean;
   contents: string;
 }

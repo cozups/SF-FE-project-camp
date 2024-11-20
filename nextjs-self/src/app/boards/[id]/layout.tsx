@@ -5,7 +5,7 @@ function DetailPageLayout({
   params,
   children,
 }: Readonly<{
-  params: Promise<{ pageId: string }>;
+  params: Promise<{ id: string }>;
   children: React.ReactNode;
 }>) {
   return (

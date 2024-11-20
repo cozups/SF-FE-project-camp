@@ -1,85 +1,85 @@
 'use client';
 
-import { BoardData } from '@/app/types';
-import {
-  Checkbox,
-  CustomButton,
-  DatePicker,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Separator,
-} from '@/components';
-import { pagesAtom } from '@/store';
+import { BoardData, Page } from '@/app/types';
+import { Checkbox, CustomButton, DatePicker, Separator } from '@/components';
+import { currentPageAtom, pagesAtom } from '@/store';
 import { useAtom } from 'jotai';
 import { ChevronUp } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { useParams } from 'next/navigation';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import { MarkDownEditorDialog } from './ME-Dialog';
+import MarkdownEditor from '@uiw/react-markdown-editor';
 
 interface Props {
   data: BoardData;
 }
 
 function BoardCard({ data }: Props) {
-  const { pageId } = useParams();
-  const [pages, setPages] = useAtom(pagesAtom);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [boardData, setBoardData] = useState(data);
+  const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
+  const [boardData, setBoardData] = useState<BoardData>(data);
+  const currentBoardIndex = currentPage.boards.findIndex(
+    (board) => board.id === data.id
+  );
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    setBoardData((prev) => ({ ...prev, title: e.target.value }));
+    const input = e.target.value;
+    setBoardData((prev) => ({ ...prev, title: input }));
+    currentPage.boards[currentBoardIndex] = boardData;
+    setCurrentPage({ ...currentPage });
   };
 
-  const onCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    const currentPage = pages[currentIdx];
-
-    const currentBoardIdx = currentPage.boards.findIndex(
-      (board) => board.id === data.id
-    );
-    if (currentBoardIdx > -1) {
-      const currentBoard = currentPage.boards[currentBoardIdx];
-      currentPage.boards[currentBoardIdx] = {
-        ...currentBoard,
-        isCompleted: e.target.checked,
-      };
+  const onCheck = (checked: boolean | string) => {
+    console.log(checked);
+    if (checked) {
+      data.isCompleted = true;
+      setBoardData({ ...data });
+    } else {
+      data.isCompleted = false;
+      setBoardData({ ...data });
     }
-
-    pages[currentIdx] = currentPage;
-    setPages([...pages]);
-    setBoardData({ ...boardData, isCompleted: e.target.checked });
+    currentPage.boards[currentBoardIndex] = { ...data };
+    setCurrentPage({ ...currentPage });
   };
 
   const onClickDuplicate = () => {
-    pages[currentIdx].boards.push({ ...data, id: nanoid(8) });
-    setPages([...pages]);
+    const newBoards = [...currentPage.boards];
+    newBoards.push({
+      ...data,
+      id: nanoid(8),
+      isCompleted: false,
+    });
+    const page = { ...currentPage, boards: newBoards };
+    setCurrentPage(page);
   };
 
   const onClickDelete = () => {
-    const currentPageBoards = pages[currentIdx].boards;
-    const deletedBoards = currentPageBoards.filter(
+    const newBoards = currentPage.boards.filter(
       (board) => board.id !== data.id
     );
-    pages[currentIdx].boards = deletedBoards;
-    setPages([...pages]);
+    const page = { ...currentPage, boards: newBoards };
+    setCurrentPage(page);
   };
 
-  useEffect(() => {
-    const current = pages.findIndex((page) => page.id === pageId);
-    if (current > -1) {
-      setCurrentIdx(current);
-    }
-  }, [pages, pageId]);
+  const onSelectDate = (label: 'from' | 'to', date: Date) => {
+    // 시간 오프셋 계산
+    const offsetInMinutes = date.getTimezoneOffset();
+    const koreaTime = new Date(date.getTime() - offsetInMinutes * 60 * 1000);
+
+    currentPage.boards[currentBoardIndex][label] = koreaTime;
+    setCurrentPage({ ...currentPage });
+  };
 
   return (
     <div className="w-full bg-white flex flex-col gap-3 p-5 shadow-lg border border-neutral-100 rounded">
       <div className="w-full flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           {/* 체크박스 */}
-          <Checkbox className="w-5 h-5 border-neutral-400" />
+          <Checkbox
+            className="w-5 h-5 border-neutral-400"
+            onCheckedChange={(checked) => onCheck(checked)}
+            checked={boardData.isCompleted}
+          />
           <input
             type="text"
             placeholder="Board Title Here..."
@@ -92,8 +92,12 @@ function BoardCard({ data }: Props) {
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <DatePicker label="From" value={boardData.from} />
-          <DatePicker label="To" value={boardData.to} />
+          <DatePicker
+            label="From"
+            value={boardData.from}
+            onSelect={onSelectDate}
+          />
+          <DatePicker label="To" value={boardData.to} onSelect={onSelectDate} />
         </div>
         <div className="flex items-center">
           <CustomButton onClick={onClickDuplicate}>Duplicate</CustomButton>
@@ -106,44 +110,14 @@ function BoardCard({ data }: Props) {
         </div>
       </div>
       <Separator orientation="horizontal" />
-      {/* Add contents 버튼 */}
-      <Dialog>
-        <DialogTrigger asChild>
-          <CustomButton className="w-full">Add Contents</CustomButton>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <div className="flex items-center mb-2 gap-2">
-              {/* 체크박스 */}
-              <input
-                type="checkbox"
-                className={`w-6 h-6 appearance-none border border-neutral-300 rounded
-                            hover:border-neutral-400
-                            active: bg-neutral-100 
-                            checked:bg-emerald-300 checked:rounded-full checked:border-0
-                            checked:hover:bg-emerald-400
-                            checked:active:bg-emerald-500`}
-                onChange={onCheck}
-                checked={data.isCompleted}
-              />
-              <DialogTitle className="font-semibold text-2xl">
-                {boardData.title || 'title'}
-              </DialogTitle>
-            </div>
-            <div className="flex items-center gap-2">
-              <DatePicker label="From" value={boardData.from} />
-              <DatePicker label="To" value={boardData.to} />
-            </div>
-          </DialogHeader>
-          <div>{/* 에디터 영역 */}</div>
-          <DialogFooter>
-            <CustomButton type="text">Cancel</CustomButton>
-            <CustomButton type="filled">Done</CustomButton>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       {/* 컨텐츠 영역 */}
-      <div></div>
+      <div>
+        <MarkdownEditor.Markdown source={boardData.contents} />
+      </div>
+      {/* Add contents 버튼 */}
+      <MarkDownEditorDialog data={boardData} setData={setBoardData}>
+        <CustomButton className="w-full">Add Contents</CustomButton>
+      </MarkDownEditorDialog>
     </div>
   );
 }

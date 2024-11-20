@@ -9,9 +9,9 @@ interface Props {
 }
 
 function PageListItem({ item }: Props) {
-  const { pageId } = useParams();
+  const { id } = useParams();
 
-  const isFocussed = pageId === item.id;
+  const isFocussed = Number(id) === item.id;
 
   return (
     <li>
@@ -19,7 +19,7 @@ function PageListItem({ item }: Props) {
         className={`w-full pl-3 py-2  text-black flex items-center justify-start gap-2 rounded-md ${
           isFocussed ? 'bg-[#F5F5F5]' : 'bg-white'
         }`}
-        href={`/page/${item.id}`}
+        href={`/boards/${item.id}`}
       >
         {/* 아이콘 영역 */}
         <div

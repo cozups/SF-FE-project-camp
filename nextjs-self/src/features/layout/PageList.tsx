@@ -13,7 +13,10 @@ function PageList() {
   useEffect(() => {
     const fetchPages = async () => {
       try {
-        const { data, status } = await supabase.from('pages').select();
+        const { data, status } = await supabase
+          .from('todos')
+          .select('*')
+          .order('created_at', { ascending: true });
 
         if (status === 200 && data) {
           setPages(data);

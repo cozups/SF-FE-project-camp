@@ -2,19 +2,20 @@ import { BoardData, Page } from '@/app/types';
 import { atom } from 'jotai';
 
 export const defaultPage: Page = {
-  id: '',
+  id: 0,
   title: '',
-  from: '',
-  to: '',
+  from: null,
+  to: null,
   boards: [],
 };
 export const defaultBoard: BoardData = {
-  id: '',
+  id: 0,
   title: '',
-  from: '',
-  to: '',
+  from: null,
+  to: null,
   isCompleted: false,
   contents: '',
 };
 
 export const pagesAtom = atom<Page[]>([]);
+export const currentPageAtom = atom<Page>(defaultPage);

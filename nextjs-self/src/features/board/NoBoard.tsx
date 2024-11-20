@@ -10,9 +10,9 @@ interface Props {
   setBoards: Dispatch<SetStateAction<BoardData[]>>;
 }
 
-function NoBoard({ setBoards }: Props) {
+function NoBoard() {
   const onClickAddBoard = () => {
-    setBoards((prev) => [...prev, { ...defaultBoard, id: nanoid(8) }]);
+    // setBoards((prev) => [...prev, { ...defaultBoard, id: nanoid(8) }]);
   };
   return (
     <div className="w-full h-full flex flex-col items-center justify-center gap-7">
