@@ -116,7 +116,9 @@ function BoardCard({ data }: Props) {
       </div>
       {/* Add contents 버튼 */}
       <MarkDownEditorDialog data={boardData} setData={setBoardData}>
-        <CustomButton className="w-full">Add Contents</CustomButton>
+        <CustomButton className="w-full" type="text">
+          Add Contents
+        </CustomButton>
       </MarkDownEditorDialog>
     </div>
   );
