@@ -1,19 +1,28 @@
 'use client';
+import { useAtom } from 'jotai';
+import { nanoid } from 'nanoid';
 
 import { BoardData } from '@/app/types';
-import { defaultBoard } from '@/store';
+import { currentPageAtom } from '@/store';
 import { CirclePlus } from 'lucide-react';
-import { nanoid } from 'nanoid';
-import { Dispatch, SetStateAction } from 'react';
-
-interface Props {
-  setBoards: Dispatch<SetStateAction<BoardData[]>>;
-}
 
 function NoBoard() {
-  const onClickAddBoard = () => {
-    // setBoards((prev) => [...prev, { ...defaultBoard, id: nanoid(8) }]);
+  const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
+
+  const onAddBoard = async () => {
+    const newBoards: BoardData[] = [...(currentPage.boards || [])];
+    const boardContent = {
+      id: nanoid(8),
+      isCompleted: false,
+      title: '',
+      from: null,
+      to: null,
+      contents: '',
+    };
+    newBoards.push(boardContent);
+    setCurrentPage({ ...currentPage, boards: newBoards });
   };
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center gap-7">
       {/* 텍스트 영역 */}
@@ -26,7 +35,7 @@ function NoBoard() {
       {/* 버튼 */}
       <CirclePlus
         className="text-orange-400 active:text-orange-700 w-20 h-20 cursor-pointer"
-        onClick={onClickAddBoard}
+        onClick={onAddBoard}
       />
     </div>
   );

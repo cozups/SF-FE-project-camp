@@ -10,23 +10,24 @@ import { supabase } from '@/utils/supabase';
 function PageList() {
   const [pages, setPages] = useAtom(pagesAtom);
 
-  useEffect(() => {
-    const fetchPages = async () => {
-      try {
-        const { data, status } = await supabase
-          .from('todos')
-          .select('*')
-          .order('created_at', { ascending: true });
+  const fetchPages = async () => {
+    try {
+      const { data, status } = await supabase
+        .from('todos')
+        .select('*')
+        .order('created_at', { ascending: true });
 
-        if (status === 200 && data) {
-          setPages(data);
-        }
-      } catch (error) {
-        console.error(error);
+      if (status === 200 && data) {
+        setPages(data);
       }
-    };
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
     fetchPages();
-  }, [setPages]);
+  }, []);
 
   return (
     <div className="w-full mt-2">

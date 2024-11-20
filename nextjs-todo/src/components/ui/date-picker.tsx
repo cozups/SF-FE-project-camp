@@ -4,34 +4,25 @@ import { CalendarSearch } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { Calendar } from './calendar';
 import { useEffect, useState } from 'react';
+import { formatDate } from 'date-fns';
 
 interface Props {
   label: 'From' | 'To';
-  value: Date | null;
+  data: Date | null;
   onSelect: (label: 'from' | 'to', date: Date) => void;
+  // setState: Dispatch<SetStateAction<DateType>>;
 }
 
-function DatePicker({ label, value, onSelect }: Props) {
-  const [date, setDate] = useState<Date | undefined>(undefined);
+function DatePicker({ label, data, onSelect }: Props) {
+  const [date, setDate] = useState<Date | null>();
 
   useEffect(() => {
-    if (value) {
-      const valueToDate = new Date(value);
-      setDate(valueToDate);
-    }
-  }, [value]);
+    setDate(data);
+  }, [data]);
 
   const onSelectDate = (date: Date) => {
     setDate(date);
     onSelect(label.toLowerCase() as 'from' | 'to', date);
-  };
-
-  const formatDate = (date: Date) => {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
-    const dd = String(date.getDate()).padStart(2, '0');
-
-    return `${yyyy}-${mm}-${dd}`;
   };
 
   return (
@@ -40,7 +31,7 @@ function DatePicker({ label, value, onSelect }: Props) {
       <Popover>
         <PopoverTrigger asChild>
           <button className="w-40 bg-white text-black flex items-center justify-between gap-3 border px-3 py-2 rounded-sm focus:border-2 focus:border-neutral-500">
-            {date && formatDate(date)}
+            {date ? formatDate(date, 'yyyy-MM-dd') : ''}
             <CalendarSearch className="w-4 h-4 text-neutral-400" />
           </button>
         </PopoverTrigger>

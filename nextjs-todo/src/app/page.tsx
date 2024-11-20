@@ -1,10 +1,9 @@
 'use client';
 import { useAtom } from 'jotai';
-import { nanoid } from 'nanoid';
 import { useRouter } from 'next/navigation';
 
 import { CustomButton } from '@/components';
-import { defaultPage, pagesAtom } from '@/store';
+import { pagesAtom } from '@/store';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/utils/supabase';
 

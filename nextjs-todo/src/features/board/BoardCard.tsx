@@ -2,12 +2,11 @@
 
 import { BoardData, Page } from '@/app/types';
 import { Checkbox, CustomButton, DatePicker, Separator } from '@/components';
-import { currentPageAtom, pagesAtom } from '@/store';
+import { currentPageAtom } from '@/store';
 import { useAtom } from 'jotai';
 import { ChevronUp } from 'lucide-react';
 import { nanoid } from 'nanoid';
-import { useParams } from 'next/navigation';
-import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { MarkDownEditorDialog } from './ME-Dialog';
 import MarkdownEditor from '@uiw/react-markdown-editor';
 
@@ -30,7 +29,6 @@ function BoardCard({ data }: Props) {
   };
 
   const onCheck = (checked: boolean | string) => {
-    console.log(checked);
     if (checked) {
       data.isCompleted = true;
       setBoardData({ ...data });
@@ -94,10 +92,10 @@ function BoardCard({ data }: Props) {
         <div className="flex items-center gap-2">
           <DatePicker
             label="From"
-            value={boardData.from}
+            data={boardData.from}
             onSelect={onSelectDate}
           />
-          <DatePicker label="To" value={boardData.to} onSelect={onSelectDate} />
+          <DatePicker label="To" data={boardData.to} onSelect={onSelectDate} />
         </div>
         <div className="flex items-center">
           <CustomButton onClick={onClickDuplicate}>Duplicate</CustomButton>

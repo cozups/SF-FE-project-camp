@@ -1,39 +1,19 @@
 'use client';
 
 import { BoardData } from '@/app/types';
-import { CustomButton, DatePicker, Progress } from '@/components';
-import { currentPageAtom, defaultBoard } from '@/store';
+import { CustomButton, DatePicker } from '@/components';
+import { currentPageAtom, pagesAtom } from '@/store';
 import { supabase } from '@/utils/supabase';
 import { useAtom } from 'jotai';
 import { nanoid } from 'nanoid';
-import { ChangeEvent, use, useEffect, useMemo } from 'react';
+import { ChangeEvent } from 'react';
+import { ProgressIndicator } from '@/features';
+import { useParams } from 'next/navigation';
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
-function DetailPageHeader({ params }: Props) {
-  const { id } = use(params);
+function DetailPageHeader() {
+  const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
-
-  useEffect(() => {
-    const fetchPage = async () => {
-      try {
-        const { data, status } = await supabase
-          .from('todos')
-          .select()
-          .eq('id', id);
-
-        if (status === 200 && data) {
-          setCurrentPage(data[0]);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchPage();
-  }, [id, setCurrentPage]);
+  const [pages, setPages] = useAtom(pagesAtom);
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -59,7 +39,16 @@ function DetailPageHeader({ params }: Props) {
         .eq('id', id)
         .select();
       if (status === 200 && data) {
-        setCurrentPage(data[0]);
+        // 현재 페이지 상태 반영
+        setCurrentPage({
+          ...data[0],
+        });
+
+        // 사이드바에 반영하기 위해 전체 페이지에 반영
+        const newPageList = pages.map((page) =>
+          page.id === Number(id) ? data[0] : page
+        );
+        setPages(newPageList);
       }
     } catch (error) {
       console.error(error);
@@ -79,23 +68,6 @@ function DetailPageHeader({ params }: Props) {
     newBoards.push(boardContent);
     setCurrentPage({ ...currentPage, boards: newBoards });
   };
-  console.log(currentPage);
-
-  const boardsCount = useMemo(() => {
-    return currentPage.boards ? currentPage.boards.length : 0;
-  }, [currentPage]);
-
-  const completedCount = useMemo(() => {
-    return currentPage.boards
-      ? currentPage.boards.reduce(
-          (acc, cur) => (cur.isCompleted ? acc + 1 : acc),
-          0
-        )
-      : 0;
-  }, [currentPage]);
-
-  const progressRate =
-    boardsCount === 0 ? 0 : (completedCount / boardsCount) * 100;
 
   return (
     <header className="w-full bg-white  py-4 px-7 flex items-end justify-between">
@@ -112,23 +84,18 @@ function DetailPageHeader({ params }: Props) {
         />
 
         {/* 진행도 영역 */}
-        <div className="flex items-center gap-3">
-          <span className="font-semibold text-lg text-neutral-500">
-            {completedCount}/{boardsCount} completed
-          </span>
-          <Progress value={progressRate} className="w-[238px] h-[6px]" />
-        </div>
+        <ProgressIndicator />
         {/* 기한 및 버튼 영역 */}
         <div className="w-full flex items-center justify-between gap-5">
           <div className="flex items-center gap-2">
             <DatePicker
               label="From"
-              value={currentPage.from}
+              data={currentPage.from}
               onSelect={onSelectDate}
             />
             <DatePicker
               label="To"
-              value={currentPage.to}
+              data={currentPage.to}
               onSelect={onSelectDate}
             />
           </div>
