@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import MarkdownEditor from '@uiw/react-markdown-editor';
 
 import {
@@ -18,15 +18,14 @@ import {
 import { BoardData, Page } from '@/app/types';
 import { useAtom } from 'jotai';
 import { currentPageAtom } from '@/store';
+import { calculateTimeOffset } from './lib';
 
 interface Props {
   children: ReactNode;
   data: BoardData;
-  setData: Dispatch<SetStateAction<BoardData>>;
 }
 
-function MarkDownEditorDialog({ children, data, setData }: Props) {
-  const [boardData, setBoardData] = useState(data);
+function MarkDownEditorDialog({ children, data }: Props) {
   const [markdown, setMarkdown] = useState<string>(data.contents);
   const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
   const currentBoardIndex = currentPage.boards.findIndex(
@@ -35,8 +34,7 @@ function MarkDownEditorDialog({ children, data, setData }: Props) {
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
     // 시간 오프셋 계산
-    const offsetInMinutes = date.getTimezoneOffset();
-    const koreaTime = new Date(date.getTime() - offsetInMinutes * 60 * 1000);
+    const koreaTime = calculateTimeOffset(date);
 
     currentPage.boards[currentBoardIndex][label] = koreaTime;
     setCurrentPage({ ...currentPage });
@@ -44,7 +42,6 @@ function MarkDownEditorDialog({ children, data, setData }: Props) {
 
   const onClickDone = () => {
     currentPage.boards[currentBoardIndex].contents = markdown;
-    setData({ ...boardData, contents: markdown });
     setCurrentPage({ ...currentPage });
   };
 
@@ -58,23 +55,15 @@ function MarkDownEditorDialog({ children, data, setData }: Props) {
             <Checkbox
               className="w-5 h-5 border-neutral-400"
               // onCheckedChange={(checked) => onCheck(checked)}
-              checked={boardData.isCompleted}
+              checked={data.isCompleted}
             />
             <DialogTitle className="font-semibold text-2xl">
-              {boardData.title || 'title'}
+              {data.title || 'title'}
             </DialogTitle>
           </div>
           <div className="flex items-center gap-2">
-            <DatePicker
-              label="From"
-              data={boardData.from}
-              onSelect={onSelectDate}
-            />
-            <DatePicker
-              label="To"
-              data={boardData.to}
-              onSelect={onSelectDate}
-            />
+            <DatePicker label="From" data={data.from} onSelect={onSelectDate} />
+            <DatePicker label="To" data={data.to} onSelect={onSelectDate} />
           </div>
         </DialogHeader>
         <div className="flex items-center justify-center">

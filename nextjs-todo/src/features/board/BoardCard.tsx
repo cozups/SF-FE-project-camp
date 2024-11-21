@@ -1,17 +1,17 @@
 'use client';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
+import { nanoid } from 'nanoid';
+import { useParams } from 'next/navigation';
 
+import { ChevronUp } from 'lucide-react';
+import MarkdownEditor from '@uiw/react-markdown-editor';
 import { BoardData, Page } from '@/app/types';
 import { Checkbox, CustomButton, DatePicker, Separator } from '@/components';
 import { currentPageAtom } from '@/store';
-import { useAtom } from 'jotai';
-import { ChevronUp } from 'lucide-react';
-import { nanoid } from 'nanoid';
-import { ChangeEvent, useState } from 'react';
-import { MarkDownEditorDialog } from './ME-Dialog';
-import MarkdownEditor from '@uiw/react-markdown-editor';
-import { calculateTimeOffset } from './lib';
+import { MarkDownEditorDialog } from '@/features';
+import { calculateTimeOffset } from '@/features/board/lib';
 import { useDeleteBoard } from '@/shared/api/delete';
-import { useParams } from 'next/navigation';
 
 interface Props {
   data: BoardData;
@@ -26,6 +26,10 @@ function BoardCard({ data }: Props) {
     (board) => board.id === data.id
   );
 
+  useEffect(() => {
+    setBoardData(currentPage.boards[currentBoardIndex]);
+  }, [currentPage, currentBoardIndex]);
+
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     const newBoard = { ...boardData, title: input };
@@ -35,13 +39,8 @@ function BoardCard({ data }: Props) {
   };
 
   const onCheck = (checked: boolean | string) => {
-    if (checked) {
-      data.isCompleted = true;
-      setBoardData({ ...data });
-    } else {
-      data.isCompleted = false;
-      setBoardData({ ...data });
-    }
+    data.isCompleted = checked ? true : false;
+    setBoardData({ ...data });
     currentPage.boards[currentBoardIndex] = { ...data };
     setCurrentPage({ ...currentPage });
   };
@@ -114,7 +113,7 @@ function BoardCard({ data }: Props) {
         <MarkdownEditor.Markdown source={boardData.contents} />
       </div>
       {/* Add contents 버튼 */}
-      <MarkDownEditorDialog data={boardData} setData={setBoardData}>
+      <MarkDownEditorDialog data={boardData}>
         <CustomButton className="w-full" type="text">
           Add Contents
         </CustomButton>
