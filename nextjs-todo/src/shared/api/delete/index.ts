@@ -54,7 +54,6 @@ export const useDeleteBoard = () => {
   ) => {
     try {
       const deletedBoard = currentBoard.filter((board) => board.id !== boardId);
-      console.log(deletedBoard);
       const { status, error } = await supabase
         .from('todos')
         .update({ boards: deletedBoard })
