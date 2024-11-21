@@ -67,12 +67,12 @@ function MarkDownEditorDialog({ children, data, setData }: Props) {
           <div className="flex items-center gap-2">
             <DatePicker
               label="From"
-              value={boardData.from}
+              data={boardData.from}
               onSelect={onSelectDate}
             />
             <DatePicker
               label="To"
-              value={boardData.to}
+              data={boardData.to}
               onSelect={onSelectDate}
             />
           </div>

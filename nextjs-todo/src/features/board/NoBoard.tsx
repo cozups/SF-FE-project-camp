@@ -9,7 +9,7 @@ import { CirclePlus } from 'lucide-react';
 function NoBoard() {
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
 
-  const onAddBoard = async () => {
+  const onAddBoard = () => {
     const newBoards: BoardData[] = [...(currentPage.boards || [])];
     const boardContent = {
       id: nanoid(8),
