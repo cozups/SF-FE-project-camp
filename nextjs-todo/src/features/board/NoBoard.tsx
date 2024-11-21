@@ -1,26 +1,14 @@
 'use client';
-import { useAtom } from 'jotai';
-import { nanoid } from 'nanoid';
-
-import { BoardData } from '@/app/types';
-import { currentPageAtom } from '@/store';
 import { CirclePlus } from 'lucide-react';
+import { useCreateBoard } from '@/shared/api';
+import { useParams } from 'next/navigation';
 
 function NoBoard() {
-  const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
+  const { id } = useParams();
+  const [createBoard] = useCreateBoard();
 
   const onAddBoard = () => {
-    const newBoards: BoardData[] = [...(currentPage.boards || [])];
-    const boardContent = {
-      id: nanoid(8),
-      isCompleted: false,
-      title: '',
-      from: null,
-      to: null,
-      contents: '',
-    };
-    newBoards.push(boardContent);
-    setCurrentPage({ ...currentPage, boards: newBoards });
+    createBoard(id);
   };
 
   return (

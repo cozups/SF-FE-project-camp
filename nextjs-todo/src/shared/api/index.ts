@@ -1,5 +1,5 @@
 /** create */
-export { useCreatePage } from './create';
+export { useCreatePage, useCreateBoard } from './create';
 
 /** read */
 export { useFetchAllPage, useFetchCurrentPage } from './read';

@@ -2,11 +2,11 @@ import { currentPageAtom, pagesAtom } from '@/store';
 import { supabase } from '@/utils/supabase';
 import { useAtom } from 'jotai';
 
-export const useUpdatePage = (id: string | string[] | undefined) => {
+export const useUpdatePage = () => {
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
   const [pages, setPages] = useAtom(pagesAtom);
 
-  const updatePage = async () => {
+  const updatePage = async (id: string | string[] | undefined) => {
     try {
       const { data, status } = await supabase
         .from('todos')

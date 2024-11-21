@@ -10,22 +10,27 @@ import { ChangeEvent, useState } from 'react';
 import { MarkDownEditorDialog } from './ME-Dialog';
 import MarkdownEditor from '@uiw/react-markdown-editor';
 import { calculateTimeOffset } from './lib';
+import { useDeleteBoard } from '@/shared/api/delete';
+import { useParams } from 'next/navigation';
 
 interface Props {
   data: BoardData;
 }
 
 function BoardCard({ data }: Props) {
+  const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
   const [boardData, setBoardData] = useState<BoardData>(data);
+  const [deleteBoard] = useDeleteBoard();
   const currentBoardIndex = currentPage.boards.findIndex(
     (board) => board.id === data.id
   );
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setBoardData((prev) => ({ ...prev, title: input }));
-    currentPage.boards[currentBoardIndex] = boardData;
+    const newBoard = { ...boardData, title: input };
+    setBoardData(newBoard);
+    currentPage.boards[currentBoardIndex] = newBoard;
     setCurrentPage({ ...currentPage });
   };
 
@@ -53,11 +58,7 @@ function BoardCard({ data }: Props) {
   };
 
   const onClickDelete = () => {
-    const newBoards = currentPage.boards.filter(
-      (board) => board.id !== data.id
-    );
-    const page = { ...currentPage, boards: newBoards };
-    setCurrentPage(page);
+    deleteBoard(id, boardData.id);
   };
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
