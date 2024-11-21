@@ -2,35 +2,19 @@
 import { use, useEffect } from 'react';
 
 import { BoardCard, TodoHeader, NoBoard } from '@/features';
-import { useAtom } from 'jotai';
-import { currentPageAtom } from '@/store';
-import { supabase } from '@/utils/supabase';
+import { useFetchCurrentPage } from '@/shared/api';
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
 function BoardPage({ params }: Props) {
-  const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
   const { id } = use(params);
+  const [currentPage, fetchPage] = useFetchCurrentPage(id);
 
   useEffect(() => {
-    const fetchPage = async () => {
-      try {
-        const { data, status } = await supabase
-          .from('todos')
-          .select()
-          .eq('id', id);
-
-        if (status === 200 && data) {
-          setCurrentPage(data[0]);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
     fetchPage();
-  }, [id, setCurrentPage]);
+  }, [fetchPage]);
 
   return (
     <div className="w-full h-full flex flex-col">

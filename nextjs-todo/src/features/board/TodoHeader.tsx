@@ -14,22 +14,21 @@ import {
   CustomButton,
   DatePicker,
 } from '@/components';
-import { currentPageAtom, pagesAtom } from '@/store';
-import { supabase } from '@/utils/supabase';
+import { currentPageAtom } from '@/store';
 import { useAtom } from 'jotai';
 import { nanoid } from 'nanoid';
 import { ChangeEvent } from 'react';
 import { ProgressIndicator } from '@/features';
-import { useParams, useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
+import { useParams } from 'next/navigation';
 import { calculateTimeOffset } from './lib';
+import { useUpdatePage } from '@/shared/api';
+import { useDeletePage } from '@/shared/api/delete';
 
 function TodoHeader() {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
-  const [pages, setPages] = useAtom(pagesAtom);
-  const { toast } = useToast();
-  const router = useRouter();
+  const [updatePage] = useUpdatePage(id);
+  const [deletePage] = useDeletePage(id);
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -46,30 +45,6 @@ function TodoHeader() {
     setCurrentPage(page);
   };
 
-  const onSave = async () => {
-    try {
-      const { data, status } = await supabase
-        .from('todos')
-        .update(currentPage)
-        .eq('id', id)
-        .select();
-      if (status === 200 && data) {
-        // 현재 페이지 상태 반영
-        setCurrentPage({
-          ...data[0],
-        });
-
-        // 사이드바에 반영하기 위해 전체 페이지에 반영
-        const newPageList = pages.map((page) =>
-          page.id === Number(id) ? data[0] : page
-        );
-        setPages(newPageList);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const onAddBoard = () => {
     const newBoards: BoardData[] = [...(currentPage.boards || [])];
     const boardContent = {
@@ -84,40 +59,11 @@ function TodoHeader() {
     setCurrentPage({ ...currentPage, boards: newBoards });
   };
 
-  const onDeletePage = async () => {
-    try {
-      const { status, error } = await supabase
-        .from('todos')
-        .delete()
-        .eq('id', id);
-
-      if (status === 204) {
-        const newPages = pages.filter((page) => page.id !== Number(id));
-        setPages(newPages);
-        toast({
-          title: `${currentPage.title} TODO 삭제가 완료되었습니다.`,
-          description: '홈페이지로 이동합니다.',
-        });
-
-        router.replace('/');
-      }
-      if (error) {
-        toast({
-          variant: 'destructive',
-          title: '삭제에 실패했습니다.',
-          description: '개발자 도구 창을 확인해주세요.',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <header className="w-full bg-white  py-4 px-7 flex items-end justify-between">
       <div className="w-full flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <CustomButton type="ghost" className={`w-fit`} onClick={onSave}>
+          <CustomButton type="ghost" className={`w-fit`} onClick={updatePage}>
             저장
           </CustomButton>
           <AlertDialog>
@@ -138,7 +84,7 @@ function TodoHeader() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>아니오</AlertDialogCancel>
-                <AlertDialogAction onClick={onDeletePage}>예</AlertDialogAction>
+                <AlertDialogAction onClick={deletePage}>예</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

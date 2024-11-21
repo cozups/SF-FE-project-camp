@@ -3,31 +3,14 @@
 import React, { useEffect } from 'react';
 import { PageListItem } from './PageListItem';
 import { Page } from '@/app/types';
-import { useAtom } from 'jotai';
-import { pagesAtom } from '@/store';
-import { supabase } from '@/utils/supabase';
+import { useFetchAllPage } from '@/shared/api';
 
 function PageList() {
-  const [pages, setPages] = useAtom(pagesAtom);
-
-  const fetchPages = async () => {
-    try {
-      const { data, status } = await supabase
-        .from('todos')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (status === 200 && data) {
-        setPages(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [pages, fetchPages] = useFetchAllPage();
 
   useEffect(() => {
     fetchPages();
-  }, []);
+  }, [fetchPages]);
 
   return (
     <div className="w-full mt-2">

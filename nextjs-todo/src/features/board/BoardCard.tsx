@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid';
 import { ChangeEvent, useState } from 'react';
 import { MarkDownEditorDialog } from './ME-Dialog';
 import MarkdownEditor from '@uiw/react-markdown-editor';
+import { calculateTimeOffset } from './lib';
 
 interface Props {
   data: BoardData;
@@ -61,8 +62,7 @@ function BoardCard({ data }: Props) {
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
     // 시간 오프셋 계산
-    const offsetInMinutes = date.getTimezoneOffset();
-    const koreaTime = new Date(date.getTime() - offsetInMinutes * 60 * 1000);
+    const koreaTime = calculateTimeOffset(date);
 
     currentPage.boards[currentBoardIndex][label] = koreaTime;
     setCurrentPage({ ...currentPage });
