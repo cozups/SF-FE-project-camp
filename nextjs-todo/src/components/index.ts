@@ -35,3 +35,15 @@ export {
   ToastAction,
 } from './ui/toast';
 export { Toaster } from './ui/toaster';
+export { Alert, AlertDescription, AlertTitle } from './ui/alert';
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
