@@ -1,5 +1,5 @@
 'use client';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent } from 'react';
 import { useAtom } from 'jotai';
 import { nanoid } from 'nanoid';
 import { useParams } from 'next/navigation';
@@ -20,29 +20,24 @@ interface Props {
 function BoardCard({ data }: Props) {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
-  const [boardData, setBoardData] = useState<BoardData>(data);
   const [deleteBoard] = useDeleteBoard();
-  const currentBoardIndex = currentPage.boards.findIndex(
-    (board) => board.id === data.id
-  );
-
-  useEffect(() => {
-    setBoardData(currentPage.boards[currentBoardIndex]);
-  }, [currentPage, currentBoardIndex]);
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    const newBoard = { ...boardData, title: input };
-    setBoardData(newBoard);
-    currentPage.boards[currentBoardIndex] = newBoard;
-    setCurrentPage({ ...currentPage });
+
+    const changedBoards = currentPage.boards.map((board) =>
+      board.id === data.id ? { ...board, title: input } : board
+    );
+    setCurrentPage({ ...currentPage, boards: changedBoards });
   };
 
   const onCheck = (checked: boolean | string) => {
-    data.isCompleted = checked ? true : false;
-    setBoardData({ ...data });
-    currentPage.boards[currentBoardIndex] = { ...data };
-    setCurrentPage({ ...currentPage });
+    const changedBoards = currentPage.boards.map((board) =>
+      board.id === data.id
+        ? { ...board, isCompleted: checked === true ? true : false }
+        : board
+    );
+    setCurrentPage({ ...currentPage, boards: changedBoards });
   };
 
   const onClickDuplicate = () => {
@@ -57,7 +52,7 @@ function BoardCard({ data }: Props) {
   };
 
   const onClickDelete = () => {
-    deleteBoard(id, boardData.id);
+    deleteBoard(id, data.id);
   };
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
@@ -78,13 +73,13 @@ function BoardCard({ data }: Props) {
           <Checkbox
             className="w-5 h-5 border-neutral-400"
             onCheckedChange={(checked) => onCheck(checked)}
-            checked={boardData.isCompleted}
+            checked={data.isCompleted}
           />
           <input
             type="text"
             placeholder="Board Title Here..."
             className="font-semibold text-2xl outline-none"
-            value={boardData.title}
+            value={data.title}
             onChange={onChangeTitle}
           />
         </div>
@@ -92,12 +87,8 @@ function BoardCard({ data }: Props) {
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <DatePicker
-            label="From"
-            data={boardData.from}
-            onSelect={onSelectDate}
-          />
-          <DatePicker label="To" data={boardData.to} onSelect={onSelectDate} />
+          <DatePicker label="From" data={data.from} onSelect={onSelectDate} />
+          <DatePicker label="To" data={data.to} onSelect={onSelectDate} />
         </div>
         <div className="flex items-center">
           <CustomButton onClick={onClickDuplicate}>Duplicate</CustomButton>
@@ -112,10 +103,10 @@ function BoardCard({ data }: Props) {
       <Separator orientation="horizontal" />
       {/* 컨텐츠 영역 */}
       <div>
-        <MarkdownEditor.Markdown source={boardData.contents} />
+        <MarkdownEditor.Markdown source={data.contents} />
       </div>
       {/* Add contents 버튼 */}
-      <MarkDownEditorDialog data={boardData}>
+      <MarkDownEditorDialog data={data}>
         <CustomButton className="w-full" type="text">
           Add Contents
         </CustomButton>

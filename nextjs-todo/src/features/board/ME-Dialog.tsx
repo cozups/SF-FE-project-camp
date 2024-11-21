@@ -28,9 +28,6 @@ interface Props {
 function MarkDownEditorDialog({ children, data }: Props) {
   const [markdown, setMarkdown] = useState<string>(data.contents);
   const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
-  const currentBoardIndex = currentPage.boards.findIndex(
-    (board) => board.id === data.id
-  );
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
     // 시간 오프셋 계산
@@ -43,8 +40,10 @@ function MarkDownEditorDialog({ children, data }: Props) {
   };
 
   const onClickDone = () => {
-    currentPage.boards[currentBoardIndex].contents = markdown;
-    setCurrentPage({ ...currentPage });
+    const changedBoards = currentPage.boards.map((board) =>
+      board.id === data.id ? { ...board, contents: markdown } : board
+    );
+    setCurrentPage({ ...currentPage, boards: changedBoards });
   };
 
   return (
