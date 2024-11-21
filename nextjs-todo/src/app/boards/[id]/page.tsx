@@ -1,7 +1,7 @@
 'use client';
 import { use, useEffect } from 'react';
 
-import { BoardCard, DetailPageHeader, NoBoard } from '@/features';
+import { BoardCard, TodoHeader, NoBoard } from '@/features';
 import { useAtom } from 'jotai';
 import { currentPageAtom } from '@/store';
 import { supabase } from '@/utils/supabase';
@@ -34,7 +34,7 @@ function BoardPage({ params }: Props) {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <DetailPageHeader />
+      <TodoHeader />
       <main className="flex-1 py-7 px-4 flex flex-col gap-5">
         {currentPage.boards?.length ? (
           // 보드 있을 때

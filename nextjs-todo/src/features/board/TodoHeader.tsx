@@ -1,19 +1,35 @@
 'use client';
 
 import { BoardData } from '@/app/types';
-import { CustomButton, DatePicker } from '@/components';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  CustomButton,
+  DatePicker,
+} from '@/components';
 import { currentPageAtom, pagesAtom } from '@/store';
 import { supabase } from '@/utils/supabase';
 import { useAtom } from 'jotai';
 import { nanoid } from 'nanoid';
 import { ChangeEvent } from 'react';
 import { ProgressIndicator } from '@/features';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { calculateTimeOffset } from './lib';
 
-function DetailPageHeader() {
+function TodoHeader() {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
   const [pages, setPages] = useAtom(pagesAtom);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -24,8 +40,7 @@ function DetailPageHeader() {
     const page = { ...currentPage };
 
     // 시간 오프셋 계산
-    const offsetInMinutes = date.getTimezoneOffset();
-    const koreaTime = new Date(date.getTime() - offsetInMinutes * 60 * 1000);
+    const koreaTime = calculateTimeOffset(date);
 
     page[label] = koreaTime;
     setCurrentPage(page);
@@ -55,7 +70,7 @@ function DetailPageHeader() {
     }
   };
 
-  const onAddBoard = async () => {
+  const onAddBoard = () => {
     const newBoards: BoardData[] = [...(currentPage.boards || [])];
     const boardContent = {
       id: nanoid(8),
@@ -69,12 +84,65 @@ function DetailPageHeader() {
     setCurrentPage({ ...currentPage, boards: newBoards });
   };
 
+  const onDeletePage = async () => {
+    try {
+      const { status, error } = await supabase
+        .from('todos')
+        .delete()
+        .eq('id', id);
+
+      if (status === 204) {
+        const newPages = pages.filter((page) => page.id !== Number(id));
+        setPages(newPages);
+        toast({
+          title: `${currentPage.title} TODO 삭제가 완료되었습니다.`,
+          description: '홈페이지로 이동합니다.',
+        });
+
+        router.replace('/');
+      }
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: '삭제에 실패했습니다.',
+          description: '개발자 도구 창을 확인해주세요.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <header className="w-full bg-white  py-4 px-7 flex items-end justify-between">
       <div className="w-full flex flex-col gap-4">
-        <CustomButton type="ghost" className={`w-fit`} onClick={onSave}>
-          저장
-        </CustomButton>
+        <div className="flex items-center gap-2">
+          <CustomButton type="ghost" className={`w-fit`} onClick={onSave}>
+            저장
+          </CustomButton>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <CustomButton
+                type="text"
+                className={`bg-red-100 text-red-500 hover:bg-red-200`}
+              >
+                전체 삭제
+              </CustomButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>정말로 삭제하시겠습니까?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  삭제되면 되돌릴 수 없습니다.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>아니오</AlertDialogCancel>
+                <AlertDialogAction onClick={onDeletePage}>예</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
         {/* 제목 입력 영역 */}
         <input
           placeholder="Enter Title Here"
@@ -112,4 +180,4 @@ function DetailPageHeader() {
   );
 }
 
-export { DetailPageHeader };
+export { TodoHeader };
