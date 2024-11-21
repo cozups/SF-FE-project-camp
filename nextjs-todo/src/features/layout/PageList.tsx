@@ -1,23 +1,32 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageListItem } from './PageListItem';
 import { Page } from '@/app/types';
 import { useFetchAllPage } from '@/shared/api';
+import { useAtom } from 'jotai';
+import { searchValueAtom } from '@/store';
 
 function PageList() {
   const [pages, fetchPages] = useFetchAllPage();
+  const [filteredPages, setFilteredPages] = useState<Page[]>([]);
+  const [searchValue] = useAtom(searchValueAtom);
 
   useEffect(() => {
     fetchPages();
   }, [fetchPages]);
+
+  useEffect(() => {
+    const filtered = pages.filter((page) => page.title.includes(searchValue));
+    setFilteredPages(searchValue === '' ? pages : filtered);
+  }, [pages, searchValue]);
 
   return (
     <div className="w-full mt-2">
       <p className="text-neutral-400 font-semibold text-sm">미소&apos;s</p>
       {/* 페이지 리스트 */}
       <ul>
-        {pages.map((item: Page) => (
+        {filteredPages.map((item: Page) => (
           <PageListItem key={item.id} item={item} />
         ))}
       </ul>

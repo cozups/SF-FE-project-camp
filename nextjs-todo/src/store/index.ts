@@ -9,7 +9,7 @@ export const defaultPage: Page = {
   boards: [],
 };
 export const defaultBoard: BoardData = {
-  id: 0,
+  id: '',
   title: '',
   from: null,
   to: null,
@@ -19,3 +19,4 @@ export const defaultBoard: BoardData = {
 
 export const pagesAtom = atom<Page[]>([]);
 export const currentPageAtom = atom<Page>(defaultPage);
+export const searchValueAtom = atom<string>('');
