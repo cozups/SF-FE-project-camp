@@ -10,11 +10,11 @@ interface Props {
 
 function BoardPage({ params }: Props) {
   const { id } = use(params);
-  const [currentPage, fetchPage] = useFetchCurrentPage(id);
+  const [currentPage, fetchPage] = useFetchCurrentPage();
 
   useEffect(() => {
-    fetchPage();
-  }, [fetchPage]);
+    fetchPage(id);
+  }, [fetchPage, id]);
 
   return (
     <div className="w-full h-full flex flex-col">

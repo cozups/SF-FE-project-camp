@@ -25,25 +25,29 @@ export const useFetchAllPage = (): [Page[], () => Promise<void>] => {
   return [pages, fetchAllPages];
 };
 
-export const useFetchCurrentPage = (
-  id: string | string[] | undefined
-): [Page, () => Promise<void>] => {
+export const useFetchCurrentPage = (): [
+  Page,
+  (id: string | string[] | undefined) => Promise<void>
+] => {
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
 
-  const fetchPage = useCallback(async () => {
-    try {
-      const { data, status } = await supabase
-        .from('todos')
-        .select()
-        .eq('id', id);
+  const fetchPage = useCallback(
+    async (id: string | string[] | undefined) => {
+      try {
+        const { data, status } = await supabase
+          .from('todos')
+          .select()
+          .eq('id', id);
 
-      if (status === 200 && data) {
-        setCurrentPage(data[0]);
+        if (status === 200 && data) {
+          setCurrentPage(data[0]);
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    }
-  }, [id, setCurrentPage]);
+    },
+    [setCurrentPage]
+  );
 
   return [currentPage, fetchPage];
 };
