@@ -12,7 +12,7 @@ export const useCreatePage = () => {
   const { toast } = useToast();
   const router = useRouter();
 
-  const addPage = async () => {
+  const createPage = async () => {
     try {
       const { data, status, error } = await supabase
         .from('todos')
@@ -20,7 +20,7 @@ export const useCreatePage = () => {
         .select();
 
       if (status === 201 && data) {
-        setPages([...pages, data[0]]);
+        setPages((prevPages) => [...prevPages, data[0]]);
         toast({
           title: '페이지 생성이 완료되었습니다.',
           description: `/boards/${data[0].id}`,
@@ -40,7 +40,7 @@ export const useCreatePage = () => {
     }
   };
 
-  return [addPage];
+  return [createPage];
 };
 
 export const useCreateBoard = () => {
