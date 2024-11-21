@@ -1,34 +1,19 @@
 'use client';
-
-import { BoardData } from '@/app/types';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-  CustomButton,
-  DatePicker,
-} from '@/components';
-import { currentPageAtom } from '@/store';
-import { useAtom } from 'jotai';
-import { nanoid } from 'nanoid';
 import { ChangeEvent } from 'react';
-import { ProgressIndicator } from '@/features';
+import { useAtom } from 'jotai';
 import { useParams } from 'next/navigation';
+
+import { CustomButton, DatePicker, DeleteAlertButton } from '@/components';
+import { currentPageAtom } from '@/store';
+import { ProgressIndicator } from '@/features';
 import { calculateTimeOffset } from './lib';
-import { useUpdatePage } from '@/shared/api';
-import { useDeletePage } from '@/shared/api/delete';
+import { useCreateBoard, useUpdatePage } from '@/shared/api';
 
 function TodoHeader() {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
-  const [updatePage] = useUpdatePage(id);
-  const [deletePage] = useDeletePage(id);
+  const [updatePage] = useUpdatePage();
+  const [createBoard] = useCreateBoard();
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -46,48 +31,21 @@ function TodoHeader() {
   };
 
   const onAddBoard = () => {
-    const newBoards: BoardData[] = [...(currentPage.boards || [])];
-    const boardContent = {
-      id: nanoid(8),
-      isCompleted: false,
-      title: '',
-      from: null,
-      to: null,
-      contents: '',
-    };
-    newBoards.push(boardContent);
-    setCurrentPage({ ...currentPage, boards: newBoards });
+    createBoard(id);
   };
 
   return (
     <header className="w-full bg-white  py-4 px-7 flex items-end justify-between">
       <div className="w-full flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <CustomButton type="ghost" className={`w-fit`} onClick={updatePage}>
+          <CustomButton
+            type="ghost"
+            className={`w-fit`}
+            onClick={() => updatePage(id)}
+          >
             저장
           </CustomButton>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <CustomButton
-                type="text"
-                className={`bg-red-100 text-red-500 hover:bg-red-200`}
-              >
-                전체 삭제
-              </CustomButton>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>정말로 삭제하시겠습니까?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  삭제되면 되돌릴 수 없습니다.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>아니오</AlertDialogCancel>
-                <AlertDialogAction onClick={deletePage}>예</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteAlertButton />
         </div>
         {/* 제목 입력 영역 */}
         <input

@@ -2,6 +2,7 @@
 export { CustomButton } from './ui/custom-button';
 export { SearchBar } from './ui/search-bar';
 export { DatePicker } from './ui/date-picker';
+export { DeleteAlertButton } from './ui/delete-alert/delete-alert';
 
 /** shadcn ui components */
 export { Button, buttonVariants } from './ui/button';
