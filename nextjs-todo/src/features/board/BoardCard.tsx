@@ -64,8 +64,10 @@ function BoardCard({ data }: Props) {
     // 시간 오프셋 계산
     const koreaTime = calculateTimeOffset(date);
 
-    currentPage.boards[currentBoardIndex][label] = koreaTime;
-    setCurrentPage({ ...currentPage });
+    const changedBoards = currentPage.boards.map((board) =>
+      board.id === data.id ? { ...board, [label]: koreaTime } : board
+    );
+    setCurrentPage({ ...currentPage, boards: changedBoards });
   };
 
   return (

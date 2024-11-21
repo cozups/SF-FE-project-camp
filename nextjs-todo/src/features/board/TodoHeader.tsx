@@ -21,13 +21,10 @@ function TodoHeader() {
   };
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
-    const page = { ...currentPage };
-
     // 시간 오프셋 계산
     const koreaTime = calculateTimeOffset(date);
 
-    page[label] = koreaTime;
-    setCurrentPage(page);
+    setCurrentPage((prev) => ({ ...prev, [label]: koreaTime }));
   };
 
   const onAddBoard = () => {
