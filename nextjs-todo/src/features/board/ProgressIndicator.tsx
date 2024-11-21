@@ -19,8 +19,10 @@ function ProgressIndicator() {
         )
       : 0;
   }, [currentPage]);
+
   const progressRate =
     boardsCount === 0 ? 0 : (completedCount / boardsCount) * 100;
+
   return (
     <div className="flex items-center gap-3">
       <span className="font-semibold text-lg text-neutral-500">
