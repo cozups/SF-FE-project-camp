@@ -76,7 +76,10 @@ function Profile({ userInfo }: Props) {
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <p className="text-2xl font-semibold">{userInfo.username}</p>
+              <div className="flex flex-col justify-center">
+                <p className="text-2xl font-semibold">{userInfo.username}</p>
+                <p className="text-sm font-light">{userInfo.email}</p>
+              </div>
             </div>
           </DialogTitle>
         </DialogHeader>
