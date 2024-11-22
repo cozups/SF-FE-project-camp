@@ -34,7 +34,6 @@ function LoginPage() {
       });
 
       if (data) {
-        console.log(data);
         toast({
           title: '로그인에 성공하였습니다.',
         });
