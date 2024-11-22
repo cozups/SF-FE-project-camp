@@ -45,7 +45,7 @@ function JoinPage() {
         toast({
           title: '회원가입에 성공했습니다.',
         });
-        router.replace('/login');
+        router.replace('/');
       }
       if (error) {
         toast({
