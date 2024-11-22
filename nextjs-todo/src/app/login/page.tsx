@@ -26,6 +26,7 @@ function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const { fetchUser } = useAuth();
+
   const onSubmit = async (formData: LoginData) => {
     const { email, password } = formData;
     try {

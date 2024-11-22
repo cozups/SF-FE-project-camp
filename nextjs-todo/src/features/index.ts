@@ -3,6 +3,7 @@ export { PageList } from './common/PageList';
 export { PageListItem } from './common/PageListItem';
 export { SideBar } from './common/SideBar';
 export { PageHeader } from './common/PageHeader';
+export { Profile } from './common/Profile';
 
 /** Board Page */
 export { NoBoard } from './board/NoBoard';

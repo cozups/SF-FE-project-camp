@@ -8,8 +8,17 @@ import {
   AvatarFallback,
   AvatarImage,
   CustomButton,
+  DialogDescription,
+  DialogHeader,
 } from '@/components';
 import { useAuth } from '@/shared/api';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '@radix-ui/react-dialog';
+import { Profile } from './Profile';
 
 function PageHeader() {
   const { userInfo, fetchUser, logOutUser } = useAuth();
@@ -27,11 +36,7 @@ function PageHeader() {
       {/* 로그인 상태 분기 */}
       {userInfo ? (
         <div className="flex items-center gap-2">
-          <Avatar className="w-8 h-8">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <p className="text-sm font-semibold">{userInfo.username}</p>
+          <Profile userInfo={userInfo} />
           <CustomButton type="filled" onClick={logOutUser}>
             로그아웃
           </CustomButton>

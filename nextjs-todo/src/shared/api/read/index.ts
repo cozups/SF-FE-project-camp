@@ -55,13 +55,15 @@ export const useFetchCurrentPage = (): [
 
 export const useAuth = (): {
   userInfo: UserInfo | null;
+  setUserInfo: React.Dispatch<React.SetStateAction<UserInfo | null>>;
   fetchUser: () => Promise<void>;
   logOutUser: () => Promise<void>;
 } => {
   const [userInfo, setUserInfo] = useAtom(userInfoAtom);
   const { toast } = useToast();
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
+    console.log('fetchUser called');
     try {
       const {
         data: { session },
@@ -77,7 +79,7 @@ export const useAuth = (): {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
 
   const logOutUser = async () => {
     try {
@@ -99,5 +101,5 @@ export const useAuth = (): {
     }
   };
 
-  return { userInfo, fetchUser, logOutUser };
+  return { userInfo, setUserInfo, fetchUser, logOutUser };
 };
