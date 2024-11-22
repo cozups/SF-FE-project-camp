@@ -17,7 +17,7 @@ function BoardPage({ params }: Props) {
   }, [fetchPage, id]);
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col overflow-y-scroll">
       <TodoHeader />
       <main className="flex-1 py-7 px-4 flex flex-col gap-5">
         {currentPage.boards?.length ? (

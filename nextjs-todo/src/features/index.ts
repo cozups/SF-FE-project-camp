@@ -1,6 +1,8 @@
-export { PageList } from './layout/PageList';
-export { PageListItem } from './layout/PageListItem';
-export { SideBar } from './layout/SideBar';
+/** common UI */
+export { PageList } from './common/PageList';
+export { PageListItem } from './common/PageListItem';
+export { SideBar } from './common/SideBar';
+export { PageHeader } from './common/PageHeader';
 
 /** Board Page */
 export { NoBoard } from './board/NoBoard';
