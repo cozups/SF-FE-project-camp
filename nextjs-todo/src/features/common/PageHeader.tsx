@@ -1,28 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  CustomButton,
-  DialogDescription,
-  DialogHeader,
-} from '@/components';
+import { CustomButton } from '@/components';
 import { useAuth } from '@/shared/api';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from '@radix-ui/react-dialog';
 import { Profile } from './Profile';
 
 function PageHeader() {
   const { userInfo, fetchUser, logOutUser } = useAuth();
-  const { toast } = useToast();
 
   useEffect(() => {
     fetchUser();
