@@ -14,3 +14,9 @@ export interface BoardData {
   isCompleted: boolean;
   contents: string;
 }
+
+export interface UserInfo {
+  username: string;
+  email: string;
+  // 이미지는 나중에 ...
+}

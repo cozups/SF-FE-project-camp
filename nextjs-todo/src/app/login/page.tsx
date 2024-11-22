@@ -14,6 +14,7 @@ import {
   FormMessage,
   Input,
 } from '@/components';
+import { useAuth } from '@/shared/api';
 
 interface LoginData {
   email: string;
@@ -24,7 +25,7 @@ function LoginPage() {
   const form = useForm({ defaultValues: { email: '', password: '' } });
   const { toast } = useToast();
   const router = useRouter();
-
+  const { fetchUser } = useAuth();
   const onSubmit = async (formData: LoginData) => {
     const { email, password } = formData;
     try {
@@ -37,6 +38,7 @@ function LoginPage() {
         toast({
           title: '로그인에 성공하였습니다.',
         });
+        fetchUser();
         router.replace('/');
       }
       if (error) {

@@ -2,7 +2,7 @@
 
 import { SearchBar, CustomButton } from '@/components';
 import { PageList } from './PageList';
-import { useCreatePage } from '@/shared/api';
+import { useAuth, useCreatePage } from '@/shared/api';
 import { useAtom } from 'jotai';
 import { searchValueAtom } from '@/store';
 import { ChangeEvent } from 'react';
@@ -10,6 +10,7 @@ import { ChangeEvent } from 'react';
 function SideBar() {
   const [createPage] = useCreatePage();
   const [, setSearchValue] = useAtom(searchValueAtom);
+  const { userInfo } = useAuth();
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -31,7 +32,7 @@ function SideBar() {
         Add New Page
       </CustomButton>
       {/* 페이지 컨테이너 영역 */}
-      <PageList />
+      {userInfo && <PageList />}
     </aside>
   );
 }

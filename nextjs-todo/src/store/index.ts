@@ -1,4 +1,4 @@
-import { BoardData, Page } from '@/app/types';
+import { BoardData, Page, UserInfo } from '@/app/types';
 import { atom } from 'jotai';
 
 export const defaultPage: Page = {
@@ -20,3 +20,4 @@ export const defaultBoard: BoardData = {
 export const pagesAtom = atom<Page[]>([]);
 export const currentPageAtom = atom<Page>(defaultPage);
 export const searchValueAtom = atom<string>('');
+export const userInfoAtom = atom<UserInfo | null>(null);

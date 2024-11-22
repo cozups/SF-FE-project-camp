@@ -1,7 +1,9 @@
 'use client';
 
+import { ReactNode } from 'react';
+
 interface Props {
-  children: string;
+  children: string | ReactNode;
   type?: 'text' | 'secondary' | 'filled' | 'ghost';
   className?: string;
   onClick?: () => void;

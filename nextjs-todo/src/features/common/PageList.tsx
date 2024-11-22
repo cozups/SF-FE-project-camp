@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { PageListItem } from './PageListItem';
 import { Page } from '@/app/types';
-import { useFetchAllPage } from '@/shared/api';
+import { useAuth, useFetchAllPage } from '@/shared/api';
 import { useAtom } from 'jotai';
 import { searchValueAtom } from '@/store';
 
@@ -11,6 +11,7 @@ function PageList() {
   const [pages, fetchPages] = useFetchAllPage();
   const [filteredPages, setFilteredPages] = useState<Page[]>([]);
   const [searchValue] = useAtom(searchValueAtom);
+  const { userInfo } = useAuth();
 
   useEffect(() => {
     fetchPages();
@@ -23,7 +24,9 @@ function PageList() {
 
   return (
     <div className="w-full mt-2">
-      <p className="text-neutral-400 font-semibold text-sm">미소&apos;s</p>
+      <p className="text-neutral-400 font-semibold text-sm">
+        {userInfo?.username}&apos;s
+      </p>
       {/* 페이지 리스트 */}
       <ul>
         {filteredPages.map((item: Page) => (
