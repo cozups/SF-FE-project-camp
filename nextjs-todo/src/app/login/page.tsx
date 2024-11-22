@@ -1,5 +1,9 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { useToast } from '@/hooks/use-toast';
 
+import { supabase } from '@/utils/supabase';
 import {
   Button,
   Form,
@@ -10,7 +14,6 @@ import {
   FormMessage,
   Input,
 } from '@/components';
-import { useForm } from 'react-hook-form';
 
 interface LoginData {
   email: string;
@@ -19,9 +22,34 @@ interface LoginData {
 
 function LoginPage() {
   const form = useForm({ defaultValues: { email: '', password: '' } });
+  const { toast } = useToast();
+  const router = useRouter();
 
-  const onSubmit = (data: LoginData) => {
-    console.log(data);
+  const onSubmit = async (formData: LoginData) => {
+    const { email, password } = formData;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (data) {
+        console.log(data);
+        toast({
+          title: '로그인에 성공하였습니다.',
+        });
+        router.replace('/');
+      }
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: '로그인에 실패하였습니다.',
+          description: '입력 정보를 확인하세요.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

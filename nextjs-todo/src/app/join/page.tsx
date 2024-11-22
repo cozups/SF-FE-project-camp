@@ -1,5 +1,9 @@
 'use client';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { useToast } from '@/hooks/use-toast';
 
+import { supabase } from '@/utils/supabase';
 import {
   Button,
   Form,
@@ -10,7 +14,6 @@ import {
   FormMessage,
   Input,
 } from '@/components';
-import { useForm } from 'react-hook-form';
 
 interface JoinData {
   username: string;
@@ -22,9 +25,38 @@ function JoinPage() {
   const form = useForm({
     defaultValues: { username: '', email: '', password: '' },
   });
+  const { toast } = useToast();
+  const router = useRouter();
 
-  const onSubmit = (data: JoinData) => {
-    console.log(data);
+  const onSubmit = async (formData: JoinData) => {
+    const { username, email, password } = formData;
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username,
+          },
+        },
+      });
+      if (data) {
+        toast({
+          title: '회원가입에 성공했습니다.',
+        });
+        router.replace('/login');
+      }
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: '회원가입에 실패했습니다.',
+          description: '입력 정보를 확인해주세요.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -76,7 +108,7 @@ function JoinPage() {
           />
 
           <Button type="submit" className="w-full mt-4">
-            로그인
+            회원가입
           </Button>
         </form>
       </Form>
