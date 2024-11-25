@@ -2,18 +2,21 @@
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
+import { z } from 'zod';
 
 import { supabase } from '@/utils/supabase';
 import {
   Button,
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
   Input,
 } from '@/components';
+import { useAuth } from '@/shared/api';
 
 interface JoinData {
   username: string;
@@ -27,8 +30,32 @@ function JoinPage() {
   });
   const { toast } = useToast();
   const router = useRouter();
+  const { fetchUser } = useAuth();
+
+  /** 데이터 유효성 검사 */
+  const validateData = (formData: JoinData) => {
+    const schema = z.object({
+      username: z.string().min(2),
+      email: z.string().email(),
+      password: z.string().min(6),
+    });
+
+    const result = schema.safeParse(formData);
+
+    if (!result.success) {
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   const onSubmit = async (formData: JoinData) => {
+    const isValidate = validateData(formData);
+
+    if (!isValidate) {
+      return;
+    }
+
     const { username, email, password } = formData;
 
     try {
@@ -45,6 +72,7 @@ function JoinPage() {
         toast({
           title: '회원가입에 성공했습니다.',
         });
+        fetchUser();
         router.replace('/');
       }
       if (error) {
@@ -102,6 +130,9 @@ function JoinPage() {
                 <FormControl>
                   <Input type="password" placeholder="비밀번호" {...field} />
                 </FormControl>
+                <FormDescription className="text-xs text-blue-400">
+                  6자 이상의 비밀번호를 입력하세요.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
