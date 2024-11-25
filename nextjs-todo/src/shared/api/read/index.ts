@@ -15,7 +15,7 @@ export const useFetchAllPage = (): [Page[], () => Promise<void>] => {
       const { data, status } = await supabase
         .from('todos')
         .select('*')
-        .eq('author', userInfo.id)
+        .eq('author_id', userInfo.id)
         .order('created_at', { ascending: true });
 
       if (status === 200 && data) {
