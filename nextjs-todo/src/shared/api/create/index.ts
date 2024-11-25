@@ -15,7 +15,14 @@ export const useCreatePage = () => {
   const { userInfo } = useAuth();
 
   const createPage = async () => {
-    if (!userInfo) return;
+    if (!userInfo) {
+      toast({
+        variant: 'destructive',
+        title: '로그인이 필요합니다.',
+      });
+      router.push('/login');
+      return;
+    }
     try {
       const { data, status, error } = await supabase
         .from('todos')
