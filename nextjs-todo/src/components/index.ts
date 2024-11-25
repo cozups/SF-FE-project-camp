@@ -3,6 +3,7 @@ export { CustomButton } from './ui/custom-button';
 export { SearchBar } from './ui/search-bar';
 export { DatePicker } from './ui/date-picker';
 export { DeleteAlertButton } from './ui/delete-alert/delete-alert';
+export { CardHeaderSkeleton } from './ui/skeleton/CardHeaderSkeleton';
 
 /** shadcn ui components */
 export { Button, buttonVariants } from './ui/button';
@@ -59,4 +60,4 @@ export {
   FormMessage,
   FormField,
 } from './ui/form';
-export { Skeleton } from './ui/skeleton';
+export { Skeleton } from './ui/skeleton/skeleton';

@@ -3,12 +3,16 @@ import { ChangeEvent } from 'react';
 import { useAtom } from 'jotai';
 import { useParams } from 'next/navigation';
 
-import { CustomButton, DatePicker, DeleteAlertButton } from '@/components';
+import {
+  CardHeaderSkeleton,
+  CustomButton,
+  DatePicker,
+  DeleteAlertButton,
+} from '@/components';
 import { currentPageAtom } from '@/store';
 import { ProgressIndicator } from '@/features';
 import { calculateTimeOffset } from './lib';
 import { useCreateBoard, useUpdatePage } from '@/shared/api';
-import { Skeleton } from '@/components';
 
 interface Props {
   loading: boolean;
@@ -51,17 +55,7 @@ function TodoHeader({ loading }: Props) {
         </div>
         {/* 제목 입력 영역 */}
         {loading ? (
-          <div className="w-full flex flex-col gap-2">
-            <Skeleton className="w-[80%] h-16" />
-            <div className="flex items-center gap-2">
-              <Skeleton className="w-36 h-8" />
-              <Skeleton className="w-[30%] h-8" />
-            </div>
-            <div className="flex items-center gap-2">
-              <Skeleton className="w-[30%] h-10" />
-              <Skeleton className="w-[30%] h-10" />
-            </div>
-          </div>
+          <CardHeaderSkeleton />
         ) : (
           <>
             <input
