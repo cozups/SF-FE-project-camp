@@ -59,3 +59,4 @@ export {
   FormMessage,
   FormField,
 } from './ui/form';
+export { Skeleton } from './ui/skeleton';

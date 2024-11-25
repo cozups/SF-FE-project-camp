@@ -32,7 +32,7 @@ function SideBar() {
         Add New Page
       </CustomButton>
       {/* 페이지 컨테이너 영역 */}
-      {userInfo && <PageList />}
+      <PageList />
     </aside>
   );
 }

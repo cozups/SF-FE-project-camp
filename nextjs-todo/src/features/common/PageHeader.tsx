@@ -1,19 +1,21 @@
 'use client';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CustomButton } from '@/components';
 import { useAuth } from '@/shared/api';
 import { Profile } from './Profile';
-import { AlignJustify } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components';
 
 function PageHeader() {
   const { userInfo, fetchUser, logOutUser } = useAuth();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchUser();
+    setIsLoading(false);
   }, [fetchUser]);
 
   const onLogOut = async () => {
@@ -23,14 +25,13 @@ function PageHeader() {
 
   return (
     <header className="w-full h-14 flex justify-between items-center px-4 py-2 border-b">
-      <div className="flex items-center gap-4">
-        <AlignJustify className="cursor-pointer" />
-        <Link href="/" className="font-extrabold text-2xl">
-          TODO
-        </Link>
-      </div>
+      <Link href="/" className="font-extrabold text-2xl">
+        TODO
+      </Link>
       {/* 로그인 상태 분기 */}
-      {userInfo ? (
+      {isLoading ? (
+        <Skeleton className="w-40 h-10" />
+      ) : userInfo ? (
         <div className="flex items-center gap-2">
           <Profile userInfo={userInfo} />
           <CustomButton type="filled" onClick={onLogOut}>

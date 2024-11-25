@@ -8,8 +8,13 @@ import { currentPageAtom } from '@/store';
 import { ProgressIndicator } from '@/features';
 import { calculateTimeOffset } from './lib';
 import { useCreateBoard, useUpdatePage } from '@/shared/api';
+import { Skeleton } from '@/components';
 
-function TodoHeader() {
+interface Props {
+  loading: boolean;
+}
+
+function TodoHeader({ loading }: Props) {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
   const [updatePage] = useUpdatePage();
@@ -45,37 +50,52 @@ function TodoHeader() {
           <DeleteAlertButton />
         </div>
         {/* 제목 입력 영역 */}
-        <input
-          placeholder="Enter Title Here"
-          className="font-extrabold text-5xl h-18 w-[80%] outline-none"
-          value={currentPage.title}
-          onChange={onChangeTitle}
-        />
-
-        {/* 진행도 영역 */}
-        <ProgressIndicator />
-        {/* 기한 및 버튼 영역 */}
-        <div className="w-full flex items-center justify-between gap-5">
-          <div className="flex items-center gap-2">
-            <DatePicker
-              label="From"
-              data={currentPage.from}
-              onSelect={onSelectDate}
-            />
-            <DatePicker
-              label="To"
-              data={currentPage.to}
-              onSelect={onSelectDate}
-            />
+        {loading ? (
+          <div className="w-full flex flex-col gap-2">
+            <Skeleton className="w-[80%] h-16" />
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-36 h-8" />
+              <Skeleton className="w-[30%] h-8" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-[30%] h-10" />
+              <Skeleton className="w-[30%] h-10" />
+            </div>
           </div>
-          <CustomButton
-            type="filled"
-            className="w-fit justify-self-end"
-            onClick={onAddBoard}
-          >
-            Add New Board
-          </CustomButton>
-        </div>
+        ) : (
+          <>
+            <input
+              placeholder="Enter Title Here"
+              className="font-extrabold text-5xl h-16 w-[80%] outline-none"
+              value={currentPage.title}
+              onChange={onChangeTitle}
+            />
+            {/* 진행도 영역 */}
+            <ProgressIndicator />
+            {/* 기한 및 버튼 영역 */}
+            <div className="w-full flex items-center justify-between gap-5">
+              <div className="flex items-center gap-2">
+                <DatePicker
+                  label="From"
+                  data={currentPage.from}
+                  onSelect={onSelectDate}
+                />
+                <DatePicker
+                  label="To"
+                  data={currentPage.to}
+                  onSelect={onSelectDate}
+                />
+              </div>
+              <CustomButton
+                type="filled"
+                className="w-fit justify-self-end"
+                onClick={onAddBoard}
+              >
+                Add New Board
+              </CustomButton>
+            </div>
+          </>
+        )}
       </div>
     </header>
   );
