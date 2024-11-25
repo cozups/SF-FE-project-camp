@@ -20,7 +20,13 @@ export const useCreatePage = () => {
       const { data, status, error } = await supabase
         .from('todos')
         .insert([
-          { title: '', boards: [], from: null, to: null, author: userInfo.id },
+          {
+            title: '',
+            boards: [],
+            from: null,
+            to: null,
+            author_id: userInfo.id,
+          },
         ])
         .select();
 

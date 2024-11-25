@@ -7,7 +7,7 @@ export const defaultPage: Page = {
   from: null,
   to: null,
   boards: [],
-  author: '',
+  author_id: '',
 };
 export const defaultBoard: BoardData = {
   id: '',

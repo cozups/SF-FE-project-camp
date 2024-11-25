@@ -4,7 +4,7 @@ export interface Page {
   boards: BoardData[];
   from: Date | null;
   to: Date | null;
-  author: string;
+  author_id: string;
 }
 
 export interface BoardData {
