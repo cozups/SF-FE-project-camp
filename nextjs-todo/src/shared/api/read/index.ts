@@ -7,12 +7,15 @@ import { useCallback } from 'react';
 
 export const useFetchAllPage = (): [Page[], () => Promise<void>] => {
   const [pages, setPages] = useAtom(pagesAtom);
+  const { userInfo } = useAuth();
 
   const fetchAllPages = useCallback(async () => {
+    if (!userInfo) return;
     try {
       const { data, status } = await supabase
         .from('todos')
         .select('*')
+        .eq('author', userInfo.id)
         .order('created_at', { ascending: true });
 
       if (status === 200 && data) {
@@ -21,7 +24,7 @@ export const useFetchAllPage = (): [Page[], () => Promise<void>] => {
     } catch (error) {
       console.error(error);
     }
-  }, [setPages]);
+  }, [setPages, userInfo]);
 
   return [pages, fetchAllPages];
 };
@@ -71,6 +74,7 @@ export const useAuth = (): {
 
       if (session) {
         const userInfo: UserInfo = {
+          id: session.user.id,
           username: session.user.user_metadata.username,
           email: session.user.email || '',
         };
@@ -79,7 +83,7 @@ export const useAuth = (): {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [setUserInfo]);
 
   const logOutUser = async () => {
     try {

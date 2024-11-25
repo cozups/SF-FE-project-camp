@@ -4,6 +4,7 @@ export interface Page {
   boards: BoardData[];
   from: Date | null;
   to: Date | null;
+  author: string;
 }
 
 export interface BoardData {
@@ -16,6 +17,7 @@ export interface BoardData {
 }
 
 export interface UserInfo {
+  id: string;
   username: string;
   email: string;
   // 이미지는 나중에 ...

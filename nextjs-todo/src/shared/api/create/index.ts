@@ -5,18 +5,23 @@ import { supabase } from '@/utils/supabase';
 import { useAtom } from 'jotai';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/navigation';
-import { useFetchCurrentPage } from '../read';
+import { useAuth, useFetchCurrentPage } from '../read';
 
 export const useCreatePage = () => {
-  const [pages, setPages] = useAtom(pagesAtom);
+  const [, setPages] = useAtom(pagesAtom);
   const { toast } = useToast();
   const router = useRouter();
 
+  const { userInfo } = useAuth();
+
   const createPage = async () => {
+    if (!userInfo) return;
     try {
       const { data, status, error } = await supabase
         .from('todos')
-        .insert([{ title: '', boards: [], from: null, to: null }])
+        .insert([
+          { title: '', boards: [], from: null, to: null, author: userInfo.id },
+        ])
         .select();
 
       if (status === 201 && data) {
