@@ -1,15 +1,15 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { supabase } from '@/utils/supabase';
 import {
   Button,
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,44 +18,27 @@ import {
 } from '@/components';
 import { useAuth } from '@/shared/api';
 
-interface JoinData {
-  username: string;
-  email: string;
-  password: string;
-}
+const formSchema = z.object({
+  username: z.string().min(1, {
+    message: '1글자 이상의 이름이 필요합니다.',
+  }),
+  email: z.string().email({
+    message: '이메일 형식이 아닙니다.',
+  }),
+  password: z.string().min(6, {
+    message: '6글자 이상의 비밀번호가 필요합니다.',
+  }),
+});
 
 function JoinPage() {
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: { username: '', email: '', password: '' },
   });
-  const { toast } = useToast();
   const router = useRouter();
   const { fetchUser } = useAuth();
 
-  /** 데이터 유효성 검사 */
-  const validateData = (formData: JoinData) => {
-    const schema = z.object({
-      username: z.string().min(2),
-      email: z.string().email(),
-      password: z.string().min(6),
-    });
-
-    const result = schema.safeParse(formData);
-
-    if (!result.success) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const onSubmit = async (formData: JoinData) => {
-    const isValidate = validateData(formData);
-
-    if (!isValidate) {
-      return;
-    }
-
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     const { username, email, password } = formData;
 
     try {
@@ -68,7 +51,8 @@ function JoinPage() {
           },
         },
       });
-      if (data) {
+
+      if (data.user && data.session) {
         toast({
           title: '회원가입에 성공했습니다.',
         });
@@ -76,11 +60,19 @@ function JoinPage() {
         router.replace('/');
       }
       if (error) {
-        toast({
-          variant: 'destructive',
-          title: '회원가입에 실패했습니다.',
-          description: '입력 정보를 확인해주세요.',
-        });
+        if (error.code === 'user_already_exists') {
+          toast({
+            variant: 'destructive',
+            title: '이미 존재하는 이메일입니다.',
+            description: '다른 이메일을 사용해주세요.',
+          });
+        } else {
+          toast({
+            variant: 'destructive',
+            title: '회원가입에 실패했습니다.',
+            description: '입력 정보를 확인해주세요.',
+          });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -128,11 +120,12 @@ function JoinPage() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="비밀번호" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="6자 이상의 비밀번호"
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription className="text-xs text-blue-400">
-                  6자 이상의 비밀번호를 입력하세요.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

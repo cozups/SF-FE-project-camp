@@ -1,7 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { supabase } from '@/utils/supabase';
 import {
@@ -16,18 +18,24 @@ import {
 } from '@/components';
 import { useAuth } from '@/shared/api';
 
-interface LoginData {
-  email: string;
-  password: string;
-}
+const formSchema = z.object({
+  email: z.string().email({
+    message: '이메일 형식이 아닙니다.',
+  }),
+  password: z.string().min(6, {
+    message: '6자 이상의 비밀번호를 입력하세요.',
+  }),
+});
 
 function LoginPage() {
-  const form = useForm({ defaultValues: { email: '', password: '' } });
-  const { toast } = useToast();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: '', password: '' },
+  });
   const router = useRouter();
   const { fetchUser } = useAuth();
 
-  const onSubmit = async (formData: LoginData) => {
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     const { email, password } = formData;
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -35,7 +43,7 @@ function LoginPage() {
         password,
       });
 
-      if (data) {
+      if (data.user && data.session) {
         toast({
           title: '로그인에 성공하였습니다.',
         });
