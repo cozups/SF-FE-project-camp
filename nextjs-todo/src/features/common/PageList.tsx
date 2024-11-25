@@ -30,9 +30,11 @@ function PageList() {
       {isLoading ? (
         <Skeleton className="w-20 h-6" />
       ) : (
-        <p className="text-neutral-400 font-semibold text-sm">
-          {userInfo?.username}&apos;s
-        </p>
+        userInfo && (
+          <p className="text-neutral-400 font-semibold text-sm">
+            {userInfo.username}&apos;s
+          </p>
+        )
       )}
 
       {/* 페이지 리스트 */}
@@ -41,7 +43,8 @@ function PageList() {
           ? Array.from({ length: 3 }, (_, index) => index + 1).map((item) => (
               <Skeleton key={`page-${item}`} className="w-full h-8 my-2" />
             ))
-          : filteredPages.map((item: Page) => (
+          : userInfo &&
+            filteredPages.map((item: Page) => (
               <PageListItem key={item.id} item={item} />
             ))}
       </ul>
