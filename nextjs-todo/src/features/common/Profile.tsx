@@ -22,7 +22,7 @@ import {
   DialogClose,
 } from '@/components';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/shared/api';
+import { useAuth } from '@/hooks/supabase';
 import { supabase } from '@/utils/supabase';
 
 interface Props {

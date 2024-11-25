@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useState } from 'react';
+import { useAtom } from 'jotai';
 import MarkdownEditor from '@uiw/react-markdown-editor';
 
 import {
@@ -16,7 +17,6 @@ import {
   DialogTrigger,
 } from '@/components';
 import { BoardData, Page } from '@/app/types';
-import { useAtom } from 'jotai';
 import { currentPageAtom } from '@/store';
 import { calculateTimeOffset } from './lib';
 

@@ -13,10 +13,10 @@ import {
   AlertDialogTrigger,
   CustomButton,
 } from '@/components';
-import { useDeletePage } from '@/shared/api/delete';
+import { useTodos } from '@/hooks/supabase';
 
 function DeleteAlertButton() {
-  const [deletePage] = useDeletePage();
+  const { deleteTodo } = useTodos();
   const { id } = useParams();
 
   return (
@@ -38,7 +38,7 @@ function DeleteAlertButton() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>아니오</AlertDialogCancel>
-          <AlertDialogAction onClick={() => deletePage(id)}>
+          <AlertDialogAction onClick={() => deleteTodo(id)}>
             예
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -12,7 +12,7 @@ import {
 import { currentPageAtom } from '@/store';
 import { ProgressIndicator } from '@/features';
 import { calculateTimeOffset } from './lib';
-import { useCreateBoard, useUpdatePage } from '@/shared/api';
+import { useBoards, useTodos } from '@/hooks/supabase';
 
 interface Props {
   loading: boolean;
@@ -21,8 +21,8 @@ interface Props {
 function TodoHeader({ loading }: Props) {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
-  const [updatePage] = useUpdatePage();
-  const [createBoard] = useCreateBoard();
+  const { updateTodo } = useTodos();
+  const { createBoard } = useBoards();
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -47,7 +47,7 @@ function TodoHeader({ loading }: Props) {
           <CustomButton
             type="ghost"
             className={`w-fit`}
-            onClick={() => updatePage(id)}
+            onClick={() => updateTodo(id)}
           >
             저장
           </CustomButton>

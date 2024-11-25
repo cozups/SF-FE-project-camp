@@ -1,16 +1,15 @@
 'use client';
+import { ChangeEvent } from 'react';
+import { useAtom } from 'jotai';
 
 import { SearchBar, CustomButton } from '@/components';
 import { PageList } from './PageList';
-import { useAuth, useCreatePage } from '@/shared/api';
-import { useAtom } from 'jotai';
+import { useTodos } from '@/hooks/supabase';
 import { searchValueAtom } from '@/store';
-import { ChangeEvent } from 'react';
 
 function SideBar() {
-  const [createPage] = useCreatePage();
+  const { createTodo } = useTodos();
   const [, setSearchValue] = useAtom(searchValueAtom);
-  const { userInfo } = useAuth();
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
@@ -28,7 +27,7 @@ function SideBar() {
         onChange={onSearch}
       />
       {/* 버튼 */}
-      <CustomButton type="secondary" className="w-full" onClick={createPage}>
+      <CustomButton type="secondary" className="w-full" onClick={createTodo}>
         Add New Page
       </CustomButton>
       {/* 페이지 컨테이너 영역 */}

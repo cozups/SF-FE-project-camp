@@ -1,7 +1,8 @@
-import { BoardData } from '@/app/types';
-import { currentPageAtom } from '@/store';
 import { useAtom } from 'jotai';
 import { nanoid } from 'nanoid';
+
+import { BoardData } from '@/app/types';
+import { currentPageAtom } from '@/store';
 
 export const onAddBoard = async () => {
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);

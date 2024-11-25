@@ -1,12 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
-import { CustomButton } from '@/components';
-import { useAuth } from '@/shared/api';
-import { Profile } from './Profile';
 import { useRouter } from 'next/navigation';
-import { Skeleton } from '@/components';
+
+import { CustomButton, Skeleton } from '@/components';
+import { useAuth } from '@/hooks/supabase';
+import { Profile } from './Profile';
 
 function PageHeader() {
   const { userInfo, fetchUser, logOutUser } = useAuth();

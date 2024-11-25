@@ -1,24 +1,26 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
-import { PageListItem } from './PageListItem';
-import { Page } from '@/app/types';
-import { useAuth, useFetchAllPage } from '@/shared/api';
 import { useAtom } from 'jotai';
-import { searchValueAtom } from '@/store';
+
+import { Page } from '@/app/types';
+import { useAuth, useTodos } from '@/hooks/supabase';
+import { pagesAtom, searchValueAtom } from '@/store';
+import { PageListItem } from './PageListItem';
 import { Skeleton } from '@/components';
 
 function PageList() {
-  const [pages, fetchPages] = useFetchAllPage();
+  const { fetchAllTodos } = useTodos();
+  const { userInfo } = useAuth();
+
+  const [pages] = useAtom(pagesAtom);
   const [filteredPages, setFilteredPages] = useState<Page[]>([]);
   const [searchValue] = useAtom(searchValueAtom);
-  const { userInfo } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchPages();
+    fetchAllTodos();
     setIsLoading(false);
-  }, [fetchPages]);
+  }, [fetchAllTodos]);
 
   useEffect(() => {
     const filtered = pages.filter((page) => page.title.includes(searchValue));

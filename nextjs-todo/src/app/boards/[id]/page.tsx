@@ -1,9 +1,11 @@
 'use client';
 import { use, useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
 
 import { BoardCard, TodoHeader, NoBoard } from '@/features';
-import { useFetchCurrentPage } from '@/shared/api';
 import { Skeleton } from '@/components';
+import { useTodos } from '@/hooks/supabase';
+import { currentPageAtom } from '@/store';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -11,13 +13,14 @@ interface Props {
 
 function BoardPage({ params }: Props) {
   const { id } = use(params);
-  const [currentPage, fetchPage] = useFetchCurrentPage();
+  const { fetchTodo } = useTodos();
+  const [currentPage] = useAtom(currentPageAtom);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchPage(id);
+    fetchTodo(id);
     setIsLoading(false);
-  }, [fetchPage, id]);
+  }, [fetchTodo, id]);
 
   return (
     <div className="w-full h-full flex flex-col overflow-y-scroll">

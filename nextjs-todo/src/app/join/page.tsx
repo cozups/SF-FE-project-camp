@@ -1,11 +1,8 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { toast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { supabase } from '@/utils/supabase';
 import {
   Button,
   Form,
@@ -16,7 +13,7 @@ import {
   FormMessage,
   Input,
 } from '@/components';
-import { useAuth } from '@/shared/api';
+import { useAuth } from '@/hooks/supabase';
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -35,55 +32,13 @@ function JoinPage() {
     resolver: zodResolver(formSchema),
     defaultValues: { username: '', email: '', password: '' },
   });
-  const router = useRouter();
-  const { fetchUser } = useAuth();
-
-  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    const { username, email, password } = formData;
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username,
-          },
-        },
-      });
-
-      if (data.user && data.session) {
-        toast({
-          title: '회원가입에 성공했습니다.',
-        });
-        fetchUser();
-        router.replace('/');
-      }
-      if (error) {
-        if (error.code === 'user_already_exists') {
-          toast({
-            variant: 'destructive',
-            title: '이미 존재하는 이메일입니다.',
-            description: '다른 이메일을 사용해주세요.',
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: '회원가입에 실패했습니다.',
-            description: '입력 정보를 확인해주세요.',
-          });
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { joinUser } = useAuth();
 
   return (
     <div className="flex justify-center items-center">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(joinUser)}
           className="h-fit px-8 py-4 bg-white rounded-xl flex flex-col items-center justify-center gap-2"
         >
           <h3 className="text-2xl font-bold mb-4">회원가입</h3>

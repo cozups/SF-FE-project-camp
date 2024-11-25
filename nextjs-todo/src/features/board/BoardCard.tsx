@@ -11,7 +11,7 @@ import { Checkbox, CustomButton, DatePicker, Separator } from '@/components';
 import { currentPageAtom } from '@/store';
 import { MarkDownEditorDialog } from '@/features';
 import { calculateTimeOffset } from '@/features/board/lib';
-import { useDeleteBoard } from '@/shared/api/delete';
+import { useBoards } from '@/hooks/supabase';
 
 interface Props {
   data: BoardData;
@@ -20,7 +20,7 @@ interface Props {
 function BoardCard({ data }: Props) {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
-  const [deleteBoard] = useDeleteBoard();
+  const { deleteBoard } = useBoards();
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;

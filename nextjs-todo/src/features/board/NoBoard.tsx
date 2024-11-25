@@ -1,11 +1,12 @@
 'use client';
-import { CirclePlus } from 'lucide-react';
-import { useCreateBoard } from '@/shared/api';
 import { useParams } from 'next/navigation';
+
+import { CirclePlus } from 'lucide-react';
+import { useBoards } from '@/hooks/supabase';
 
 function NoBoard() {
   const { id } = useParams();
-  const [createBoard] = useCreateBoard();
+  const { createBoard } = useBoards();
 
   const onAddBoard = () => {
     createBoard(id);
