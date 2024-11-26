@@ -13,7 +13,7 @@ export default function Home() {
     if (userInfo) {
       router.replace('/boards');
     }
-  }, [router, userInfo]);
+  }, [userInfo, router]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">

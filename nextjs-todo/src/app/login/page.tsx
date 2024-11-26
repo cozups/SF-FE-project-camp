@@ -16,6 +16,8 @@ import {
 import { useAuth } from '@/hooks/supabase';
 import Link from 'next/link';
 import { Separator } from '@radix-ui/react-separator';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,7 +33,14 @@ function LoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', password: '' },
   });
-  const { logInUser, logInWithKakao } = useAuth();
+  const { userInfo, logInUser, logInWithKakao } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (userInfo) {
+      router.replace('/boards');
+    }
+  }, [router, userInfo]);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">

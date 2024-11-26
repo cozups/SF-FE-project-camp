@@ -1,12 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { CustomButton } from '@/components';
-import { useTodos } from '@/hooks/supabase';
+import { useAuth, useTodos } from '@/hooks/supabase';
+import { useRouter } from 'next/navigation';
+import { toast } from '@/hooks/use-toast';
 
 function BoardsPage() {
   const { createTodo } = useTodos();
+  const { userInfo } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userInfo) {
+      toast({
+        variant: 'destructive',
+        title: '로그인이 필요합니다.',
+        description: '로그인 페이지로 이동합니다.',
+      });
+      router.replace('/login');
+    }
+  }, [userInfo, router]);
 
   return (
     <div className="w-fit h-full flex flex-col items-center justify-center text-center gap-5">

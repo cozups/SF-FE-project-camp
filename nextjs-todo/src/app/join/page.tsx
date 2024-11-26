@@ -15,6 +15,8 @@ import {
 } from '@/components';
 import { useAuth } from '@/hooks/supabase';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -33,7 +35,14 @@ function JoinPage() {
     resolver: zodResolver(formSchema),
     defaultValues: { username: '', email: '', password: '' },
   });
-  const { joinUser } = useAuth();
+  const { joinUser, userInfo } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (userInfo) {
+      router.replace('/boards');
+    }
+  }, [userInfo, router]);
 
   return (
     <div className="w-full h-full flex justify-center items-center">
