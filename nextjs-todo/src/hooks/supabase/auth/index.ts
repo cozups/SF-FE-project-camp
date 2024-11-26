@@ -7,7 +7,7 @@ import { userInfoAtom } from '@/store';
 import { adminSupabase, supabase } from '@/utils/supabase';
 import { useRouter } from 'next/navigation';
 
-const findUserEmail = async (email: string) => {
+const findUserByEmail = async (email: string) => {
   try {
     const { data, error } = await adminSupabase.auth.admin.listUsers();
 
@@ -120,7 +120,7 @@ export const useAuth = (): {
         router.replace('/boards');
       }
       if (error) {
-        const user = await findUserEmail(email);
+        const user = await findUserByEmail(email);
 
         if (!user) {
           // 계정 없음 - 이메일 오류
