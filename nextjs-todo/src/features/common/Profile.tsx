@@ -21,9 +21,7 @@ import {
   FormMessage,
   DialogClose,
 } from '@/components';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/supabase';
-import { supabase } from '@/utils/supabase';
 
 interface Props {
   userInfo: UserInfo;
@@ -31,31 +29,7 @@ interface Props {
 
 function Profile({ userInfo }: Props) {
   const form = useForm({ defaultValues: { username: userInfo.username } });
-  const { toast } = useToast();
-  const { fetchUser } = useAuth();
-
-  const updateUser = async (formData: { username: string }) => {
-    try {
-      const { data, error } = await supabase.auth.updateUser({
-        data: formData,
-      });
-
-      if (data) {
-        toast({
-          title: '프로필이 업데이트 되었습니다.',
-        });
-        fetchUser();
-      }
-      if (error) {
-        toast({
-          title: '프로필 업데이트에 실패했습니다.',
-          description: '개발자 도구 창을 확인하세요.',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { updateUser } = useAuth();
 
   return (
     <Dialog>

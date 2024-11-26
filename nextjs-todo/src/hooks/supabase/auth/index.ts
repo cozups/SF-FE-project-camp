@@ -18,6 +18,8 @@ export const useAuth = (): {
     password: string;
   }) => Promise<void>;
   logInUser: (formData: { email: string; password: string }) => Promise<void>;
+  logInWithKakao: () => Promise<void>;
+  updateUser: (inputData: { username: string }) => Promise<void>;
 } => {
   const [userInfo, setUserInfo] = useAtom(userInfoAtom);
   const router = useRouter();
@@ -31,9 +33,10 @@ export const useAuth = (): {
       if (session) {
         const userInfo: UserInfo = {
           id: session.user.id,
-          username: session.user.user_metadata.username,
+          username: session.user.user_metadata.user_name,
           email: session.user.email || '',
         };
+        console.log(session);
         setUserInfo(userInfo);
       }
     } catch (error) {
@@ -54,7 +57,7 @@ export const useAuth = (): {
         password,
         options: {
           data: {
-            username,
+            user_name: username,
           },
         },
       });
@@ -133,5 +136,61 @@ export const useAuth = (): {
     }
   };
 
-  return { userInfo, setUserInfo, fetchUser, logOutUser, joinUser, logInUser };
+  const logInWithKakao = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'kakao',
+      });
+
+      if (data) {
+        toast({
+          title: '카카오 로그인 완료',
+          description: 'boards 페이지로 이동합니다.',
+        });
+      }
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: '카카오 로그인 실패!',
+          description: '개발자 도구 창을 확인해주세요.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateUser = async (inputData: { username: string }) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: inputData,
+      });
+
+      if (data) {
+        toast({
+          title: '프로필이 업데이트 되었습니다.',
+        });
+        fetchUser();
+      }
+      if (error) {
+        toast({
+          title: '프로필 업데이트에 실패했습니다.',
+          description: '개발자 도구 창을 확인하세요.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return {
+    userInfo,
+    setUserInfo,
+    fetchUser,
+    logOutUser,
+    joinUser,
+    logInUser,
+    logInWithKakao,
+    updateUser,
+  };
 };
