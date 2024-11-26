@@ -39,7 +39,7 @@ function LoginPage() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(logInUser)}
-            className="flex flex-col items-center justify-center"
+            className="w-56 flex flex-col items-center justify-center"
           >
             <h3 className="text-2xl font-bold mb-4">로그인</h3>
             <FormField
