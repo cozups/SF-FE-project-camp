@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
+
 import './styles/globals.css';
 import './styles/main.scss';
-import { PageHeader, SideBar } from '@/features';
+import { PageHeader } from '@/features';
 import { Toaster } from '@/components';
 
 const NOTO_SANS_KR = Noto_Sans_KR({
@@ -27,14 +28,7 @@ export default function RootLayout({
         <div className="page">
           <PageHeader />
           <div className="w-full h-[calc(100%-56px)] flex items-center">
-            <div className="page__aside">
-              <SideBar />
-            </div>
-            <div className="page__main">
-              <div className="w-full h-full flex justify-center">
-                {children}
-              </div>
-            </div>
+            {children}
           </div>
         </div>
       </body>

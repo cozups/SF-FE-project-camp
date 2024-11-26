@@ -23,7 +23,6 @@ export const useAuth = (): {
   const router = useRouter();
 
   const fetchUser = useCallback(async () => {
-    console.log('fetchUser called');
     try {
       const {
         data: { session },
@@ -65,7 +64,7 @@ export const useAuth = (): {
           title: '회원가입에 성공했습니다.',
         });
         fetchUser();
-        router.replace('/');
+        router.replace('/boards');
       }
       if (error) {
         if (error.code === 'user_already_exists') {
@@ -100,7 +99,7 @@ export const useAuth = (): {
           title: '로그인에 성공하였습니다.',
         });
         fetchUser();
-        router.replace('/');
+        router.replace('/boards');
       }
       if (error) {
         toast({

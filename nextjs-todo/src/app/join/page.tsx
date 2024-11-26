@@ -14,6 +14,7 @@ import {
   Input,
 } from '@/components';
 import { useAuth } from '@/hooks/supabase';
+import Link from 'next/link';
 
 const formSchema = z.object({
   username: z.string().min(1, {
@@ -35,11 +36,11 @@ function JoinPage() {
   const { joinUser } = useAuth();
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(joinUser)}
-          className="h-fit px-8 py-4 bg-white rounded-xl flex flex-col items-center justify-center gap-2"
+          className="h-fit px-8 py-4 bg-neutral-50 rounded-xl flex flex-col items-center justify-center gap-2 shadow-md"
         >
           <h3 className="text-2xl font-bold mb-4">회원가입</h3>
           <FormField
@@ -89,6 +90,9 @@ function JoinPage() {
           <Button type="submit" className="w-full mt-4">
             회원가입
           </Button>
+          <Link href="/login" className="text-xs text-gray-500 my-2 underline">
+            로그인하러 가기
+          </Link>
         </form>
       </Form>
     </div>
