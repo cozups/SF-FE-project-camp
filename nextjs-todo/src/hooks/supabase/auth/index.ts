@@ -4,8 +4,26 @@ import { useAtom } from 'jotai';
 import { UserInfo } from '@/app/types';
 import { toast } from '@/hooks/use-toast';
 import { userInfoAtom } from '@/store';
-import { supabase } from '@/utils/supabase';
+import { adminSupabase, supabase } from '@/utils/supabase';
 import { useRouter } from 'next/navigation';
+
+const findUserEmail = async (email: string) => {
+  try {
+    const { data, error } = await adminSupabase.auth.admin.listUsers();
+
+    if (data && data.users) {
+      const user = data.users.find((user) => user.email === email);
+      return user;
+    }
+    if (error) {
+      return undefined;
+    }
+
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const useAuth = (): {
   userInfo: UserInfo | null;
@@ -105,11 +123,23 @@ export const useAuth = (): {
         router.replace('/boards');
       }
       if (error) {
-        toast({
-          variant: 'destructive',
-          title: '로그인에 실패하였습니다.',
-          description: '입력 정보를 확인하세요.',
-        });
+        const user = await findUserEmail(email);
+
+        if (!user) {
+          // 계정 없음 - 이메일 오류
+          toast({
+            variant: 'destructive',
+            title: '로그인에 실패하였습니다.',
+            description: '계정이 존재하지 않습니다.',
+          });
+        } else {
+          // 계정 있음 - 비밀번호 오류
+          toast({
+            variant: 'destructive',
+            title: '로그인에 실패하였습니다.',
+            description: '비밀번호가 일치하지 않습니다.',
+          });
+        }
       }
     } catch (error) {
       console.error(error);
