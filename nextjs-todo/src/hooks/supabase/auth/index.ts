@@ -18,8 +18,6 @@ const findUserEmail = async (email: string) => {
     if (error) {
       return undefined;
     }
-
-    console.log(data);
   } catch (error) {
     console.error(error);
   }
@@ -54,7 +52,6 @@ export const useAuth = (): {
           username: session.user.user_metadata.user_name,
           email: session.user.email || '',
         };
-        console.log(session);
         setUserInfo(userInfo);
       }
     } catch (error) {
