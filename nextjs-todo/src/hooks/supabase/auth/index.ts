@@ -35,7 +35,10 @@ export const useAuth = (): {
   }) => Promise<void>;
   logInUser: (formData: { email: string; password: string }) => Promise<void>;
   logInWithKakao: () => Promise<void>;
-  updateUser: (inputData: { user_name: string }) => Promise<void>;
+  updateUser: (inputData: {
+    user_name: string;
+    phone_number: string;
+  }) => Promise<void>;
   resetSendEmail: (email: string) => Promise<void>;
   resetPassword: ({
     newPassword,
@@ -58,6 +61,7 @@ export const useAuth = (): {
           id: session.user.id,
           user_name: session.user.user_metadata.user_name,
           email: session.user.email || '',
+          phone_number: session.user.user_metadata.phone_number,
         };
         document.cookie = `user=${JSON.stringify(
           userInfo

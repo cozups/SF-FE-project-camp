@@ -28,7 +28,12 @@ interface Props {
 }
 
 function Profile({ userInfo }: Props) {
-  const form = useForm({ defaultValues: { user_name: userInfo.user_name } });
+  const form = useForm({
+    defaultValues: {
+      user_name: userInfo.user_name,
+      phone_number: userInfo.phone_number || '',
+    },
+  });
   const { updateUser } = useAuth();
 
   return (
@@ -70,6 +75,20 @@ function Profile({ userInfo }: Props) {
                   <FormLabel>이름</FormLabel>
                   <FormControl>
                     <Input placeholder="이름을 입력하세요." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>전화번호</FormLabel>
+                  <FormControl>
+                    <Input placeholder="010-XXXX-XXXX" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
