@@ -13,10 +13,6 @@ function PageHeader() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
-
-  useEffect(() => {
     checkAuth();
     setIsLoading(false);
   }, [checkAuth]);

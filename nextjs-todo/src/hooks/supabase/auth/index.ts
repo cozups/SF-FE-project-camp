@@ -49,7 +49,6 @@ export const useAuth = (): {
   const router = useRouter();
 
   const fetchUser = useCallback(async () => {
-    console.log('fetchuser called');
     try {
       const {
         data: { session },
@@ -270,7 +269,6 @@ export const useAuth = (): {
 
   const checkAuth = () => {
     supabase.auth.onAuthStateChange((event, session) => {
-      console.log(session);
       if (event === 'SIGNED_IN') {
         const userData = {
           email: session?.user.email || '',

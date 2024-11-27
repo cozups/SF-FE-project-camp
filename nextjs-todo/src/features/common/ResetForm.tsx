@@ -31,7 +31,6 @@ function ResetForm() {
   const { resetSendEmail } = useAuth();
 
   const onReset = (formData: z.infer<typeof formSchema>) => {
-    console.log(formData);
     resetSendEmail(formData.email);
   };
 
