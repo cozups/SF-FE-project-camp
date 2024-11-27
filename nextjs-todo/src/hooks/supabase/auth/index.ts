@@ -43,7 +43,6 @@ export const useAuth = (): {
     newPassword: string;
     newPasswordConfirm: string;
   }) => Promise<void>;
-  checkAuth: () => void;
 } => {
   const [userInfo, setUserInfo] = useAtom(userInfoAtom);
   const router = useRouter();
@@ -60,6 +59,9 @@ export const useAuth = (): {
           user_name: session.user.user_metadata.user_name,
           email: session.user.email || '',
         };
+        document.cookie = `user=${JSON.stringify(
+          userInfo
+        )}; path=/; max-age=3600;`;
         setUserInfo(userInfo);
       }
     } catch (error) {
@@ -89,6 +91,7 @@ export const useAuth = (): {
         toast({
           title: '회원가입에 성공했습니다.',
         });
+        fetchUser();
         router.replace('/boards');
       }
       if (error) {
@@ -123,6 +126,7 @@ export const useAuth = (): {
         toast({
           title: '로그인에 성공하였습니다.',
         });
+        fetchUser();
         router.replace('/boards');
       }
       if (error) {
@@ -159,6 +163,7 @@ export const useAuth = (): {
           description: '개발자 도구 창을 확인하세요.',
         });
       } else {
+        document.cookie = `user=; path=/; max-age=0;`;
         toast({
           title: '로그아웃 되었습니다.',
         });
@@ -203,6 +208,7 @@ export const useAuth = (): {
         toast({
           title: '프로필이 업데이트 되었습니다.',
         });
+        fetchUser();
       }
       if (error) {
         toast({
@@ -267,35 +273,6 @@ export const useAuth = (): {
     }
   };
 
-  const checkAuth = () => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
-        const userData = {
-          email: session?.user.email || '',
-          user_name: session?.user.user_metadata.user_name || '',
-          id: session?.user.id || '',
-        };
-
-        document.cookie = `user=${JSON.stringify(
-          userData
-        )}; path=/; max-age=3600;`;
-        setUserInfo(userData);
-      } else if (event === 'SIGNED_OUT') {
-        document.cookie = `user=; path=/; max-age=0;`;
-
-        setUserInfo(null);
-      } else if (event === 'USER_UPDATED') {
-        const userData = {
-          email: session?.user.email || '',
-          user_name: session?.user.user_metadata.user_name || '',
-          id: session?.user.id || '',
-        };
-
-        setUserInfo(userData);
-      }
-    });
-  };
-
   return {
     userInfo,
     setUserInfo,
@@ -307,6 +284,5 @@ export const useAuth = (): {
     updateUser,
     resetSendEmail,
     resetPassword,
-    checkAuth,
   };
 };
