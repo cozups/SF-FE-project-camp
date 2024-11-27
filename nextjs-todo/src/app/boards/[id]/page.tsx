@@ -35,15 +35,16 @@ function BoardPage({ params }: Props) {
                 <Skeleton className="w-full h-56" />
               </div>
             )}
-            {!isLoading && currentPage.boards?.length ? (
-              // 보드 있을 때
-              currentPage.boards.map((board) => (
-                <BoardCard key={board.id} data={board} />
-              ))
-            ) : (
-              // 보드 없을 때
-              <NoBoard />
-            )}
+            {!isLoading &&
+              (currentPage.boards?.length ? (
+                // 보드 있을 때
+                currentPage.boards.map((board) => (
+                  <BoardCard key={board.id} data={board} />
+                ))
+              ) : (
+                // 보드 없을 때
+                <NoBoard />
+              ))}
           </main>
         </>
       )}
