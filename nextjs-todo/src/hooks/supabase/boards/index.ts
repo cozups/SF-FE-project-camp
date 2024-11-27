@@ -35,7 +35,7 @@ export const useBoards = (): {
     try {
       const { status, error } = await supabase
         .from('todos')
-        .update({ boards: newBoards })
+        .update({ ...currentPage, boards: newBoards })
         .eq('id', id)
         .select();
 
