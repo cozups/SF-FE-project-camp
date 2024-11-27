@@ -1,19 +1,10 @@
 'use client';
 
 import { CustomButton } from '@/components';
-import { useAuth } from '@/hooks/supabase';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
-  const { userInfo } = useAuth();
-
-  useEffect(() => {
-    if (userInfo) {
-      router.replace('/boards');
-    }
-  }, [userInfo, router]);
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">

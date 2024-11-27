@@ -16,8 +16,7 @@ import {
 import { useAuth } from '@/hooks/supabase';
 import Link from 'next/link';
 import { Separator } from '@radix-ui/react-separator';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { ResetPassword } from '@/features';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -33,14 +32,8 @@ function LoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', password: '' },
   });
-  const { userInfo, logInUser, logInWithKakao } = useAuth();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (userInfo) {
-      router.replace('/boards');
-    }
-  }, [router, userInfo]);
+  const { logInUser, logInWithKakao } = useAuth();
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
@@ -91,6 +84,7 @@ function LoginPage() {
           >
             카카오 로그인하기
           </button>
+          <ResetPassword />
           <Link href="/join" className="text-xs text-gray-500 my-2 underline">
             계정이 없으신가요? 회원 가입하기
           </Link>

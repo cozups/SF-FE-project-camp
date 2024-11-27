@@ -28,7 +28,7 @@ interface Props {
 }
 
 function Profile({ userInfo }: Props) {
-  const form = useForm({ defaultValues: { username: userInfo.username } });
+  const form = useForm({ defaultValues: { user_name: userInfo.user_name } });
   const { updateUser } = useAuth();
 
   return (
@@ -39,7 +39,7 @@ function Profile({ userInfo }: Props) {
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <p className="text-sm font-semibold">{userInfo.username}</p>
+          <p className="text-sm font-semibold">{userInfo.user_name}</p>
         </div>
       </DialogTrigger>
       <DialogContent>
@@ -51,7 +51,7 @@ function Profile({ userInfo }: Props) {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div className="flex flex-col justify-center">
-                <p className="text-2xl font-semibold">{userInfo.username}</p>
+                <p className="text-2xl font-semibold">{userInfo.user_name}</p>
                 <p className="text-sm font-light">{userInfo.email}</p>
               </div>
             </div>
@@ -64,7 +64,7 @@ function Profile({ userInfo }: Props) {
           >
             <FormField
               control={form.control}
-              name="username"
+              name="user_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>이름</FormLabel>

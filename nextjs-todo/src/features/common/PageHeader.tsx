@@ -8,14 +8,18 @@ import { useAuth } from '@/hooks/supabase';
 import { Profile } from './Profile';
 
 function PageHeader() {
-  const { userInfo, fetchUser, logOutUser } = useAuth();
+  const { userInfo, logOutUser, checkAuth } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchUser();
+    console.log(userInfo);
+  }, [userInfo]);
+
+  useEffect(() => {
+    checkAuth();
     setIsLoading(false);
-  }, [fetchUser]);
+  }, [checkAuth]);
 
   const onLogOut = async () => {
     await logOutUser();

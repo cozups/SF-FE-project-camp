@@ -34,7 +34,7 @@ function PageList() {
       ) : (
         userInfo && (
           <p className="text-neutral-400 font-semibold text-sm">
-            {userInfo.username}&apos;s
+            {userInfo.user_name}&apos;s
           </p>
         )
       )}

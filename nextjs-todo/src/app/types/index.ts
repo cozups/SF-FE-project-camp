@@ -18,7 +18,7 @@ export interface BoardData {
 
 export interface UserInfo {
   id: string;
-  username: string;
+  user_name: string;
   email: string;
   // 이미지는 나중에 ...
 }

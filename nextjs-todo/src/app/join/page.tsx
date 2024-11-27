@@ -15,11 +15,9 @@ import {
 } from '@/components';
 import { useAuth } from '@/hooks/supabase';
 import Link from 'next/link';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
-  username: z.string().min(1, {
+  user_name: z.string().min(1, {
     message: '1글자 이상의 이름이 필요합니다.',
   }),
   email: z.string().email({
@@ -33,16 +31,9 @@ const formSchema = z.object({
 function JoinPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { username: '', email: '', password: '' },
+    defaultValues: { user_name: '', email: '', password: '' },
   });
-  const { joinUser, userInfo } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (userInfo) {
-      router.replace('/boards');
-    }
-  }, [userInfo, router]);
+  const { joinUser } = useAuth();
 
   return (
     <div className="w-full h-full flex justify-center items-center">
@@ -54,7 +45,7 @@ function JoinPage() {
           <h3 className="text-2xl font-bold mb-4">회원가입</h3>
           <FormField
             control={form.control}
-            name="username"
+            name="user_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>이름</FormLabel>

@@ -29,18 +29,27 @@ export const useAuth = (): {
   fetchUser: () => Promise<void>;
   logOutUser: () => Promise<void>;
   joinUser: (formData: {
-    username: string;
+    user_name: string;
     email: string;
     password: string;
   }) => Promise<void>;
   logInUser: (formData: { email: string; password: string }) => Promise<void>;
   logInWithKakao: () => Promise<void>;
-  updateUser: (inputData: { username: string }) => Promise<void>;
+  updateUser: (inputData: { user_name: string }) => Promise<void>;
+  resetSendEmail: (email: string) => Promise<void>;
+  resetPassword: ({
+    newPassword,
+  }: {
+    newPassword: string;
+    newPasswordConfirm: string;
+  }) => Promise<void>;
+  checkAuth: () => void;
 } => {
   const [userInfo, setUserInfo] = useAtom(userInfoAtom);
   const router = useRouter();
 
   const fetchUser = useCallback(async () => {
+    console.log('fetchuser called');
     try {
       const {
         data: { session },
@@ -49,7 +58,7 @@ export const useAuth = (): {
       if (session) {
         const userInfo: UserInfo = {
           id: session.user.id,
-          username: session.user.user_metadata.user_name,
+          user_name: session.user.user_metadata.user_name,
           email: session.user.email || '',
         };
         setUserInfo(userInfo);
@@ -60,11 +69,11 @@ export const useAuth = (): {
   }, [setUserInfo]);
 
   const joinUser = async (formData: {
-    username: string;
+    user_name: string;
     email: string;
     password: string;
   }) => {
-    const { username, email, password } = formData;
+    const { user_name, email, password } = formData;
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -72,7 +81,7 @@ export const useAuth = (): {
         password,
         options: {
           data: {
-            user_name: username,
+            user_name: user_name,
           },
         },
       });
@@ -81,7 +90,6 @@ export const useAuth = (): {
         toast({
           title: '회원가입에 성공했습니다.',
         });
-        fetchUser();
         router.replace('/boards');
       }
       if (error) {
@@ -116,7 +124,6 @@ export const useAuth = (): {
         toast({
           title: '로그인에 성공하였습니다.',
         });
-        fetchUser();
         router.replace('/boards');
       }
       if (error) {
@@ -187,7 +194,7 @@ export const useAuth = (): {
     }
   };
 
-  const updateUser = async (inputData: { username: string }) => {
+  const updateUser = async (inputData: { user_name: string }) => {
     try {
       const { data, error } = await supabase.auth.updateUser({
         data: inputData,
@@ -197,7 +204,6 @@ export const useAuth = (): {
         toast({
           title: '프로필이 업데이트 되었습니다.',
         });
-        fetchUser();
       }
       if (error) {
         toast({
@@ -210,6 +216,88 @@ export const useAuth = (): {
     }
   };
 
+  const resetSendEmail = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'http://localhost:3000/reset-password',
+      });
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: '비밀번호 재설정 이메일 발송 실패!',
+          description: '개발자 도구 창을 확인하세요.',
+        });
+      } else {
+        toast({
+          title: '비밀번호 재설정 이메일을 발송하였습니다.',
+          description: `${email}에서 메일을 확인하세요.`,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const resetPassword = async ({
+    newPassword,
+  }: {
+    newPassword: string;
+    newPasswordConfirm: string;
+  }) => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (data) {
+        toast({
+          title: '비밀번호 재설정 완료!',
+          description: '재설정 된 비밀번호로 로그인 되었습니다.',
+        });
+        router.replace('/boardsr');
+      }
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: '비밀번호 재설정에 실패했습니다.',
+          description: '개발자 도구 창을 확인하세요.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const checkAuth = () => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log(session);
+      if (event === 'SIGNED_IN') {
+        const userData = {
+          email: session?.user.email || '',
+          user_name: session?.user.user_metadata.user_name || '',
+          id: session?.user.id || '',
+        };
+
+        document.cookie = `user=${JSON.stringify(
+          userData
+        )}; path=/; max-age=3600;`;
+        setUserInfo(userData);
+      } else if (event === 'SIGNED_OUT') {
+        document.cookie = `user=; path=/; max-age=0;`;
+
+        setUserInfo(null);
+      } else if (event === 'USER_UPDATED') {
+        const userData = {
+          email: session?.user.email || '',
+          user_name: session?.user.user_metadata.user_name || '',
+          id: session?.user.id || '',
+        };
+
+        setUserInfo(userData);
+      }
+    });
+  };
+
   return {
     userInfo,
     setUserInfo,
@@ -219,5 +307,8 @@ export const useAuth = (): {
     logInUser,
     logInWithKakao,
     updateUser,
+    resetSendEmail,
+    resetPassword,
+    checkAuth,
   };
 };
