@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback } from 'react';
 import { useAtom } from 'jotai';
 
@@ -46,6 +48,7 @@ export const useAuth = (): {
     newPassword: string;
     newPasswordConfirm: string;
   }) => Promise<void>;
+  deleteUser: () => Promise<void>;
 } => {
   const [userInfo, setUserInfo] = useAtom(userInfoAtom);
   const router = useRouter();
@@ -277,6 +280,45 @@ export const useAuth = (): {
     }
   };
 
+  const deleteUser = async () => {
+    if (!userInfo) return;
+    try {
+      const { error: todoError } = await supabase
+        .from('todos')
+        .delete()
+        .eq('author_id', userInfo.id);
+
+      const { error: userError } = await adminSupabase.auth.admin.deleteUser(
+        userInfo.id
+      );
+
+      if (todoError) {
+        toast({
+          variant: 'destructive',
+          title: '회원 탈퇴 시 TODO 삭제에 실패했습니다.',
+          description: '개발자 도구 창을 확인하세요.',
+        });
+      }
+
+      if (userError) {
+        toast({
+          variant: 'destructive',
+          title: '회원 탈퇴에 실패했습니다.',
+          description: '개발자 도구 창을 확인하세요.',
+        });
+      }
+
+      toast({
+        title: '회원 탈퇴 되었습니다.',
+      });
+      document.cookie = `user=; path=/; max-age=0;`;
+      setUserInfo(null);
+      router.replace('/');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return {
     userInfo,
     setUserInfo,
@@ -288,5 +330,6 @@ export const useAuth = (): {
     updateUser,
     resetSendEmail,
     resetPassword,
+    deleteUser,
   };
 };

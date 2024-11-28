@@ -4,6 +4,7 @@ export { SearchBar } from './ui/search-bar';
 export { DatePicker } from './ui/date-picker';
 export { DeleteAlertButton } from './ui/delete-alert/delete-alert';
 export { CardHeaderSkeleton } from './ui/skeleton/CardHeaderSkeleton';
+export { DeleteUserAlert } from './ui/delete-alert/delete-user-alert';
 
 /** shadcn ui components */
 export { Button, buttonVariants } from './ui/button';

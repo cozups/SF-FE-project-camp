@@ -19,6 +19,7 @@ import {
   Input,
   FormMessage,
   DialogClose,
+  DeleteUserAlert,
 } from '@/components';
 import { useAuth } from '@/hooks/supabase';
 import { useAtomValue } from 'jotai';
@@ -94,11 +95,12 @@ function Profile() {
               )}
             />
 
-            <DialogClose asChild>
-              <Button type="submit" className="self-end mt-4">
-                저장
-              </Button>
-            </DialogClose>
+            <div className="flex items-center justify-between mt-4">
+              <DeleteUserAlert />
+              <DialogClose asChild>
+                <Button type="submit">저장</Button>
+              </DialogClose>
+            </div>
           </form>
         </Form>
       </DialogContent>
