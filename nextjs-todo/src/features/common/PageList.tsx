@@ -9,7 +9,7 @@ import { searchValueAtom } from '@/store';
 import { Todo, todosAtom } from '@/entities/todos';
 
 function PageList() {
-  const { fetchAllTodosHandler } = useTodos();
+  const { fetchAllTodos } = useTodos();
   const { userInfo } = useAuth();
 
   const todos = useAtomValue(todosAtom);
@@ -18,9 +18,9 @@ function PageList() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchAllTodosHandler();
+    fetchAllTodos();
     setIsLoading(false);
-  }, [fetchAllTodosHandler]);
+  }, [fetchAllTodos]);
 
   useEffect(() => {
     const filtered = todos.filter((todo) => todo.title.includes(searchValue));
