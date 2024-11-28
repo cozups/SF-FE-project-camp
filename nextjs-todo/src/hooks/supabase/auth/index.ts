@@ -287,7 +287,7 @@ export const useAuth = (): {
           title: '비밀번호 재설정 완료!',
           description: '재설정 된 비밀번호로 로그인 되었습니다.',
         });
-        router.replace('/boardsr');
+        router.replace('/boards');
       }
       if (error) {
         toast({
