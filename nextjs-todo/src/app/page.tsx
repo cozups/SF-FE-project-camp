@@ -1,6 +1,6 @@
 'use client';
 
-import { CustomButton } from '@/components';
+import { CustomButton } from '@/shared';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {

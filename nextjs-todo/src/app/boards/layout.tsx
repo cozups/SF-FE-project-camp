@@ -1,4 +1,4 @@
-import { SideBar } from '@/features';
+import { SideBar } from '@/widgets';
 import { ReactNode } from 'react';
 
 function BoardLayout({ children }: { children: ReactNode }) {

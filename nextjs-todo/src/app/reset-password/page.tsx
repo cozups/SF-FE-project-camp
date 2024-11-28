@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from '@/components';
+} from '@/shared';
 import { useAuth } from '@/hooks/supabase';
 import { toast } from '@/hooks/use-toast';
 

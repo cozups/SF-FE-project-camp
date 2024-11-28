@@ -3,8 +3,8 @@ import { Noto_Sans_KR } from 'next/font/google';
 
 import './styles/globals.css';
 import './styles/main.scss';
-import { PageHeader } from '@/features';
-import { Toaster } from '@/components';
+import { Toaster } from '@/shared';
+import { PageHeader } from '@/widgets';
 
 const NOTO_SANS_KR = Noto_Sans_KR({
   subsets: ['latin'],

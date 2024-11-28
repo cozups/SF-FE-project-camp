@@ -12,7 +12,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from '@/components';
+} from '@/shared';
 import { useAuth } from '@/hooks/supabase';
 import Link from 'next/link';
 import { Separator } from '@radix-ui/react-separator';

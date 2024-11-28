@@ -1,6 +1,6 @@
 'use client';
 
-import { CustomButton } from '@/components';
+import { CustomButton } from '@/shared';
 import { useTodos } from '@/hooks/supabase';
 
 function BoardsPage() {

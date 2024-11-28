@@ -3,7 +3,7 @@ import { use, useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 
 import { BoardCard, TodoHeader, NoBoard } from '@/features';
-import { Button, Skeleton } from '@/components';
+import { Button, Skeleton } from '@/shared';
 import { useTodos } from '@/hooks/supabase';
 import { useRouter } from 'next/navigation';
 import { currentTodoAtom } from '@/entities/todos';
