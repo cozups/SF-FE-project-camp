@@ -1,7 +1,6 @@
 'use client';
 import { useForm } from 'react-hook-form';
 
-import { UserInfo } from '@/app/types';
 import {
   Avatar,
   AvatarFallback,
