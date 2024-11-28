@@ -227,6 +227,7 @@ export const useAuth = (): {
     user_name: string;
     phone_number: string;
   }) => {
+    if (!userInfo) return;
     try {
       const { data, error } = await supabase.auth.updateUser({
         data: inputData,
@@ -236,7 +237,11 @@ export const useAuth = (): {
         toast({
           title: '프로필이 업데이트 되었습니다.',
         });
-        fetchUser();
+        const updated = { ...userInfo, ...inputData };
+        document.cookie = `user=${JSON.stringify(
+          updated
+        )}; path=/; max-age=3600;`;
+        setUserInfo(updated);
       }
       if (error) {
         toast({
