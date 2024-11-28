@@ -5,4 +5,4 @@
 3. 랜덤 문자열 생성기 설치 `npm i nanoid`
 
 # 배포 URL
-[sf-fe-project-camp.vercel.app](sf-fe-project-camp.vercel.app)
+[sf-fe-project-camp.vercel.app](https://sf-fe-project-camp.vercel.app)
