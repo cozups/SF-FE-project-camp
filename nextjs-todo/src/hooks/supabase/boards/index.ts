@@ -1,11 +1,10 @@
 import { useAtom } from 'jotai';
 import { nanoid } from 'nanoid';
 
-import { BoardData } from '@/app/types';
 import { toast } from '@/hooks/use-toast';
-import { currentPageAtom } from '@/store';
 import { supabase } from '@/utils/supabase';
 import { useTodos } from '../todos';
+import { Board, currentTodoAtom } from '@/entities/todos';
 
 export const useBoards = (): {
   createBoard: (id: string | string[] | undefined) => Promise<void>;
@@ -14,9 +13,9 @@ export const useBoards = (): {
     boardId: string
   ) => Promise<void>;
 } => {
-  const [currentPage] = useAtom(currentPageAtom);
+  const [currentTodo] = useAtom(currentTodoAtom);
   const { fetchTodo } = useTodos();
-  const currentBoard = currentPage.boards;
+  const currentBoard = currentTodo.boards;
 
   const createBoard = async (id: string | string[] | undefined) => {
     const boardContent = {
@@ -27,15 +26,12 @@ export const useBoards = (): {
       to: null,
       contents: '',
     };
-    const newBoards: BoardData[] = [
-      ...(currentPage.boards || []),
-      boardContent,
-    ];
+    const newBoards: Board[] = [...(currentTodo.boards || []), boardContent];
 
     try {
       const { status, error } = await supabase
         .from('todos')
-        .update({ ...currentPage, boards: newBoards })
+        .update({ ...currentTodo, boards: newBoards })
         .eq('id', id)
         .select();
 

@@ -3,11 +3,10 @@
 import { useCallback } from 'react';
 import { useAtom } from 'jotai';
 
-import { UserInfo } from '@/app/types';
 import { toast } from '@/hooks/use-toast';
-import { userInfoAtom } from '@/store';
 import { adminSupabase, supabase } from '@/utils/supabase';
 import { useRouter } from 'next/navigation';
+import { User, userInfoAtom } from '@/entities/users';
 
 const findUserByEmail = async (email: string) => {
   try {
@@ -26,8 +25,8 @@ const findUserByEmail = async (email: string) => {
 };
 
 export const useAuth = (): {
-  userInfo: UserInfo | null;
-  setUserInfo: React.Dispatch<React.SetStateAction<UserInfo | null>>;
+  userInfo: User | null;
+  setUserInfo: React.Dispatch<React.SetStateAction<User | null>>;
   fetchUser: () => Promise<void>;
   logOutUser: () => Promise<void>;
   joinUser: (formData: {
@@ -60,7 +59,7 @@ export const useAuth = (): {
       } = await supabase.auth.getSession(); // getSession 속 user를 쓰는 것이 클라이언트 사이드에서 더 빠르다고 합니다.
 
       if (session) {
-        const userInfo: UserInfo = {
+        const userInfo: User = {
           id: session.user.id,
           user_name: session.user.user_metadata.user_name,
           email: session.user.email || '',

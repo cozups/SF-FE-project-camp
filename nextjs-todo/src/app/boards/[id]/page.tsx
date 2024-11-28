@@ -1,12 +1,12 @@
 'use client';
 import { use, useEffect, useState } from 'react';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 
 import { BoardCard, TodoHeader, NoBoard } from '@/features';
 import { Button, Skeleton } from '@/components';
 import { useTodos } from '@/hooks/supabase';
-import { currentPageAtom } from '@/store';
 import { useRouter } from 'next/navigation';
+import { currentTodoAtom } from '@/entities/todos';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -15,7 +15,7 @@ interface Props {
 function BoardPage({ params }: Props) {
   const { id } = use(params);
   const { fetchTodo } = useTodos();
-  const [currentPage] = useAtom(currentPageAtom);
+  const currentTodo = useAtomValue(currentTodoAtom);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
 
@@ -26,7 +26,7 @@ function BoardPage({ params }: Props) {
 
   return (
     <div className="w-full h-full flex flex-col overflow-y-scroll">
-      {currentPage && (
+      {currentTodo && (
         <>
           <TodoHeader loading={isLoading} />
           <main className="flex-1 py-7 px-4 flex flex-col gap-5">
@@ -36,9 +36,9 @@ function BoardPage({ params }: Props) {
               </div>
             )}
             {!isLoading &&
-              (currentPage.boards?.length ? (
+              (currentTodo.boards?.length ? (
                 // 보드 있을 때
-                currentPage.boards.map((board) => (
+                currentTodo.boards.map((board) => (
                   <BoardCard key={board.id} data={board} />
                 ))
               ) : (
@@ -48,7 +48,7 @@ function BoardPage({ params }: Props) {
           </main>
         </>
       )}
-      {!currentPage && (
+      {!currentTodo && (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4">
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
             Error!

@@ -1,11 +1,11 @@
 'use client';
 
+import { Todo } from '@/entities/todos';
 import Link from 'next/link';
-import { Page } from '@/app/types';
 import { useParams } from 'next/navigation';
 
 interface Props {
-  item: Page;
+  item: Todo;
 }
 
 function PageListItem({ item }: Props) {

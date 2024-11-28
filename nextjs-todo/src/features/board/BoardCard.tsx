@@ -6,49 +6,48 @@ import { useParams } from 'next/navigation';
 
 import { ChevronUp } from 'lucide-react';
 import MarkdownEditor from '@uiw/react-markdown-editor';
-import { BoardData, Page } from '@/app/types';
 import { Checkbox, CustomButton, DatePicker, Separator } from '@/components';
-import { currentPageAtom } from '@/store';
 import { MarkDownEditorDialog } from '@/features';
 import { calculateTimeOffset } from '@/features/board/lib';
 import { useBoards } from '@/hooks/supabase';
+import { Board, currentTodoAtom, Todo } from '@/entities/todos';
 
 interface Props {
-  data: BoardData;
+  data: Board;
 }
 
 function BoardCard({ data }: Props) {
   const { id } = useParams();
-  const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
+  const [currentTodo, setCurrentTodo] = useAtom<Todo>(currentTodoAtom);
   const { deleteBoard } = useBoards();
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
 
-    const changedBoards = currentPage.boards.map((board) =>
+    const changedBoards = currentTodo.boards.map((board) =>
       board.id === data.id ? { ...board, title: input } : board
     );
-    setCurrentPage({ ...currentPage, boards: changedBoards });
+    setCurrentTodo({ ...currentTodo, boards: changedBoards });
   };
 
   const onCheck = (checked: boolean | string) => {
-    const changedBoards = currentPage.boards.map((board) =>
+    const changedBoards = currentTodo.boards.map((board) =>
       board.id === data.id
         ? { ...board, isCompleted: checked === true ? true : false }
         : board
     );
-    setCurrentPage({ ...currentPage, boards: changedBoards });
+    setCurrentTodo({ ...currentTodo, boards: changedBoards });
   };
 
   const onClickDuplicate = () => {
-    const newBoards = [...currentPage.boards];
+    const newBoards = [...currentTodo.boards];
     newBoards.push({
       ...data,
       id: nanoid(8),
       isCompleted: false,
     });
-    const page = { ...currentPage, boards: newBoards };
-    setCurrentPage(page);
+    const page = { ...currentTodo, boards: newBoards };
+    setCurrentTodo(page);
   };
 
   const onClickDelete = () => {
@@ -59,10 +58,10 @@ function BoardCard({ data }: Props) {
     // 시간 오프셋 계산
     const koreaTime = calculateTimeOffset(date);
 
-    const changedBoards = currentPage.boards.map((board) =>
+    const changedBoards = currentTodo.boards.map((board) =>
       board.id === data.id ? { ...board, [label]: koreaTime } : board
     );
-    setCurrentPage({ ...currentPage, boards: changedBoards });
+    setCurrentTodo({ ...currentTodo, boards: changedBoards });
   };
 
   return (

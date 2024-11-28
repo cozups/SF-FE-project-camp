@@ -2,40 +2,33 @@ import { useAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 
 import { toast } from '@/hooks/use-toast';
-import { currentPageAtom, pagesAtom } from '@/store';
 import { supabase } from '@/utils/supabase';
 import { useAuth } from '../auth';
 import { useCallback } from 'react';
+import { currentTodoAtom, fetchAllTodos, todosAtom } from '@/entities/todos';
 
 export const useTodos = (): {
-  fetchAllTodos: () => Promise<void>;
+  fetchAllTodosHandler: () => Promise<void>;
   fetchTodo: (id: string | string[] | undefined) => Promise<void>;
   createTodo: () => Promise<void>;
   updateTodo: (id: string | string[] | undefined) => Promise<void>;
   deleteTodo: (id: string | string[] | undefined) => Promise<void>;
 } => {
-  const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
-  const [pages, setPages] = useAtom(pagesAtom);
+  const [currentTodo, setCurrentTodo] = useAtom(currentTodoAtom);
+  const [todos, setTodos] = useAtom(todosAtom);
   const router = useRouter();
 
   const { userInfo } = useAuth();
 
-  const fetchAllTodos = useCallback(async () => {
+  const fetchAllTodosHandler = useCallback(async () => {
     if (!userInfo) return;
     try {
-      const { data, status } = await supabase
-        .from('todos')
-        .select('*')
-        .eq('author_id', userInfo.id)
-        .order('created_at', { ascending: true });
-
-      if (status === 200 && data) {
-        setPages(data);
-      }
+      const fetched = await fetchAllTodos(userInfo.id);
+      setTodos(fetched);
     } catch (error) {
       console.error(error);
     }
-  }, [setPages, userInfo]);
+  }, [setTodos, userInfo]);
 
   const fetchTodo = useCallback(
     async (id: string | string[] | undefined) => {
@@ -46,13 +39,13 @@ export const useTodos = (): {
           .eq('id', id);
 
         if (status === 200 && data) {
-          setCurrentPage(data[0]);
+          setCurrentTodo(data[0]);
         }
       } catch (error) {
         console.error(error);
       }
     },
-    [setCurrentPage]
+    [setCurrentTodo]
   );
 
   const createTodo = async () => {
@@ -79,7 +72,7 @@ export const useTodos = (): {
         .select();
 
       if (status === 201 && data) {
-        setPages((prevPages) => [...prevPages, data[0]]);
+        setTodos((prevTodos) => [...prevTodos, data[0]]);
         toast({
           title: '페이지 생성이 완료되었습니다.',
           description: `/boards/${data[0].id}`,
@@ -103,20 +96,20 @@ export const useTodos = (): {
     try {
       const { data, status } = await supabase
         .from('todos')
-        .update(currentPage)
+        .update(currentTodo)
         .eq('id', id)
         .select();
       if (status === 200 && data) {
         // 현재 페이지 상태 반영
-        setCurrentPage({
+        setCurrentTodo({
           ...data[0],
         });
 
         // 사이드바에 반영하기 위해 전체 페이지에 반영
-        const newPageList = pages.map((page) =>
-          page.id === Number(id) ? data[0] : page
+        const newPageList = todos.map((todo) =>
+          todo.id === Number(id) ? data[0] : todo
         );
-        setPages(newPageList);
+        setTodos(newPageList);
       }
     } catch (error) {
       console.error(error);
@@ -131,8 +124,8 @@ export const useTodos = (): {
         .eq('id', id);
 
       if (status === 204) {
-        const newPages = pages.filter((page) => page.id !== Number(id));
-        setPages(newPages);
+        const newPages = todos.filter((todo) => todo.id !== Number(id));
+        setTodos(newPages);
         toast({
           title: `TODO 삭제가 완료되었습니다.`,
           description: '홈페이지로 이동합니다.',
@@ -152,5 +145,11 @@ export const useTodos = (): {
     }
   };
 
-  return { fetchAllTodos, fetchTodo, createTodo, updateTodo, deleteTodo };
+  return {
+    fetchAllTodosHandler,
+    fetchTodo,
+    createTodo,
+    updateTodo,
+    deleteTodo,
+  };
 };

@@ -16,34 +16,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components';
-import { BoardData, Page } from '@/app/types';
-import { currentPageAtom } from '@/store';
 import { calculateTimeOffset } from './lib';
+import { Board, currentTodoAtom, Todo } from '@/entities/todos';
 
 interface Props {
   children: ReactNode;
-  data: BoardData;
+  data: Board;
 }
 
 function MarkDownEditorDialog({ children, data }: Props) {
   const [markdown, setMarkdown] = useState<string>(data.contents);
-  const [currentPage, setCurrentPage] = useAtom<Page>(currentPageAtom);
+  const [currentTodo, setCurrentTodo] = useAtom<Todo>(currentTodoAtom);
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
     // 시간 오프셋 계산
     const koreaTime = calculateTimeOffset(date);
 
-    const changedBoards = currentPage.boards.map((board) =>
+    const changedBoards = currentTodo.boards.map((board) =>
       board.id === data.id ? { ...board, [label]: koreaTime } : board
     );
-    setCurrentPage({ ...currentPage, boards: changedBoards });
+    setCurrentTodo({ ...currentTodo, boards: changedBoards });
   };
 
   const onClickDone = () => {
-    const changedBoards = currentPage.boards.map((board) =>
+    const changedBoards = currentTodo.boards.map((board) =>
       board.id === data.id ? { ...board, contents: markdown } : board
     );
-    setCurrentPage({ ...currentPage, boards: changedBoards });
+    setCurrentTodo({ ...currentTodo, boards: changedBoards });
   };
 
   return (

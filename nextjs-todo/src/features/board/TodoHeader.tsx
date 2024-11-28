@@ -9,10 +9,10 @@ import {
   DatePicker,
   DeleteAlertButton,
 } from '@/components';
-import { currentPageAtom } from '@/store';
 import { ProgressIndicator } from '@/features';
 import { calculateTimeOffset } from './lib';
 import { useBoards, useTodos } from '@/hooks/supabase';
+import { currentTodoAtom } from '@/entities/todos';
 
 interface Props {
   loading: boolean;
@@ -20,20 +20,20 @@ interface Props {
 
 function TodoHeader({ loading }: Props) {
   const { id } = useParams();
-  const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
+  const [currentTodo, setCurrentTodo] = useAtom(currentTodoAtom);
   const { updateTodo } = useTodos();
   const { createBoard } = useBoards();
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setCurrentPage((prev) => ({ ...prev, title: input }));
+    setCurrentTodo((prev) => ({ ...prev, title: input }));
   };
 
   const onSelectDate = (label: 'from' | 'to', date: Date) => {
     // 시간 오프셋 계산
     const koreaTime = calculateTimeOffset(date);
 
-    setCurrentPage((prev) => ({ ...prev, [label]: koreaTime }));
+    setCurrentTodo((prev) => ({ ...prev, [label]: koreaTime }));
   };
 
   const onAddBoard = () => {
@@ -61,7 +61,7 @@ function TodoHeader({ loading }: Props) {
             <input
               placeholder="Enter Title Here"
               className="font-extrabold text-5xl h-16 w-[80%] outline-none"
-              value={currentPage.title}
+              value={currentTodo.title}
               onChange={onChangeTitle}
             />
             {/* 진행도 영역 */}
@@ -71,12 +71,12 @@ function TodoHeader({ loading }: Props) {
               <div className="flex items-center gap-2">
                 <DatePicker
                   label="From"
-                  data={currentPage.from}
+                  data={currentTodo.from}
                   onSelect={onSelectDate}
                 />
                 <DatePicker
                   label="To"
-                  data={currentPage.to}
+                  data={currentTodo.to}
                   onSelect={onSelectDate}
                 />
               </div>

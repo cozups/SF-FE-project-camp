@@ -23,7 +23,7 @@ import {
 } from '@/components';
 import { useAuth } from '@/hooks/supabase';
 import { useAtomValue } from 'jotai';
-import { userInfoAtom } from '@/store';
+import { userInfoAtom } from '@/entities/users';
 
 function Profile() {
   const userInfo = useAtomValue(userInfoAtom);
