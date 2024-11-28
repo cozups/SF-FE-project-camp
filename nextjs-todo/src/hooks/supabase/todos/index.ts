@@ -5,10 +5,10 @@ import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/utils/supabase';
 import { useAuth } from '../auth';
 import { useCallback } from 'react';
-import { currentTodoAtom, fetchAllTodos, todosAtom } from '@/entities/todos';
+import { currentTodoAtom, todosAtom } from '@/entities/todos';
 
 export const useTodos = (): {
-  fetchAllTodosHandler: () => Promise<void>;
+  fetchAllTodos: () => Promise<void>;
   fetchTodo: (id: string | string[] | undefined) => Promise<void>;
   createTodo: () => Promise<void>;
   updateTodo: (id: string | string[] | undefined) => Promise<void>;
@@ -20,11 +20,18 @@ export const useTodos = (): {
 
   const { userInfo } = useAuth();
 
-  const fetchAllTodosHandler = useCallback(async () => {
+  const fetchAllTodos = useCallback(async () => {
     if (!userInfo) return;
     try {
-      const fetched = await fetchAllTodos(userInfo.id);
-      setTodos(fetched);
+      const { data, status } = await supabase
+        .from('todos')
+        .select('*')
+        .eq('author_id', userInfo.id)
+        .order('created_at', { ascending: true });
+
+      if (status === 200 && data) {
+        setTodos(data);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -146,7 +153,7 @@ export const useTodos = (): {
   };
 
   return {
-    fetchAllTodosHandler,
+    fetchAllTodos,
     fetchTodo,
     createTodo,
     updateTodo,
