@@ -8,14 +8,13 @@ import { useAuth } from '@/hooks/supabase';
 import { Profile } from './Profile';
 
 function PageHeader() {
-  const { userInfo, logOutUser, fetchUser } = useAuth();
+  const { userInfo, logOutUser } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchUser();
     setIsLoading(false);
-  }, [fetchUser]);
+  }, []);
 
   const onLogOut = async () => {
     await logOutUser();
@@ -32,7 +31,7 @@ function PageHeader() {
         <Skeleton className="w-40 h-10" />
       ) : userInfo ? (
         <div className="flex items-center gap-2">
-          <Profile userInfo={userInfo} />
+          <Profile />
           <CustomButton type="filled" onClick={onLogOut}>
             로그아웃
           </CustomButton>

@@ -22,16 +22,16 @@ import {
   DialogClose,
 } from '@/components';
 import { useAuth } from '@/hooks/supabase';
+import { useAtomValue } from 'jotai';
+import { userInfoAtom } from '@/store';
 
-interface Props {
-  userInfo: UserInfo;
-}
+function Profile() {
+  const userInfo = useAtomValue(userInfoAtom);
 
-function Profile({ userInfo }: Props) {
   const form = useForm({
     defaultValues: {
-      user_name: userInfo.user_name,
-      phone_number: userInfo.phone_number || '',
+      user_name: userInfo!.user_name,
+      phone_number: userInfo!.phone_number || '',
     },
   });
   const { updateUser } = useAuth();
@@ -44,7 +44,7 @@ function Profile({ userInfo }: Props) {
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <p className="text-sm font-semibold">{userInfo.user_name}</p>
+          <p className="text-sm font-semibold">{userInfo!.user_name}</p>
         </div>
       </DialogTrigger>
       <DialogContent>
@@ -56,8 +56,8 @@ function Profile({ userInfo }: Props) {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div className="flex flex-col justify-center">
-                <p className="text-2xl font-semibold">{userInfo.user_name}</p>
-                <p className="text-sm font-light">{userInfo.email}</p>
+                <p className="text-2xl font-semibold">{userInfo!.user_name}</p>
+                <p className="text-sm font-light">{userInfo!.email}</p>
               </div>
             </div>
           </DialogTitle>

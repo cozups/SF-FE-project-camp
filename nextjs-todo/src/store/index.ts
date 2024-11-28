@@ -1,5 +1,6 @@
 import { BoardData, Page, UserInfo } from '@/app/types';
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
 export const defaultPage: Page = {
   id: 0,
@@ -21,4 +22,4 @@ export const defaultBoard: BoardData = {
 export const pagesAtom = atom<Page[]>([]);
 export const currentPageAtom = atom<Page>(defaultPage);
 export const searchValueAtom = atom<string>('');
-export const userInfoAtom = atom<UserInfo | null>(null);
+export const userInfoAtom = atomWithStorage<UserInfo | null>('user', null);
