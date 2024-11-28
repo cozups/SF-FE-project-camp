@@ -98,7 +98,16 @@ export const useAuth = (): {
         toast({
           title: '회원가입에 성공했습니다.',
         });
-        fetchUser();
+        const userData = {
+          email: data.user.email || '',
+          id: data.user.id || '',
+          phone_number: data.user.user_metadata.phone_number || '',
+          user_name: data.user.user_metadata.user_name || '',
+        };
+        document.cookie = `user=${JSON.stringify(
+          userInfo
+        )}; path=/; max-age=3600;`;
+        setUserInfo(userData);
         router.replace('/boards');
       }
       if (error) {
@@ -133,7 +142,16 @@ export const useAuth = (): {
         toast({
           title: '로그인에 성공하였습니다.',
         });
-        fetchUser();
+        const userData = {
+          email: data.user.email || '',
+          id: data.user.id || '',
+          phone_number: data.user.user_metadata.phone_number || '',
+          user_name: data.user.user_metadata.user_name || '',
+        };
+        document.cookie = `user=${JSON.stringify(
+          userInfo
+        )}; path=/; max-age=3600;`;
+        setUserInfo(userData);
         router.replace('/boards');
       }
       if (error) {
@@ -205,7 +223,10 @@ export const useAuth = (): {
     }
   };
 
-  const updateUser = async (inputData: { user_name: string }) => {
+  const updateUser = async (inputData: {
+    user_name: string;
+    phone_number: string;
+  }) => {
     try {
       const { data, error } = await supabase.auth.updateUser({
         data: inputData,
